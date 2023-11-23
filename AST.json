@@ -165,6 +165,63 @@
             "value": {
                 "func": {
                     "value": {
+                        "id": "np",
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "Name"
+                    },
+                    "attr": "arange",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Attribute"
+                },
+                "args": [
+                    {
+                        "value": 15,
+                        "kind": null,
+                        "node_type": "Constant"
+                    }
+                ],
+                "keywords": [
+                    {
+                        "arg": "dtype",
+                        "value": {
+                            "value": {
+                                "id": "np",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "attr": "int64",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Attribute"
+                        },
+                        "node_type": "keyword"
+                    }
+                ],
+                "node_type": "Call"
+            },
+            "type_comment": null,
+            "node_type": "Assign"
+        },
+        {
+            "targets": [
+                {
+                    "id": "p",
+                    "ctx": {
+                        "node_type": "Store"
+                    },
+                    "node_type": "Name"
+                }
+            ],
+            "value": {
+                "func": {
+                    "value": {
                         "func": {
                             "value": {
                                 "id": "np",
@@ -173,7 +230,7 @@
                                 },
                                 "node_type": "Name"
                             },
-                            "attr": "arange",
+                            "attr": "arrange",
                             "ctx": {
                                 "node_type": "Load"
                             },
@@ -186,26 +243,7 @@
                                 "node_type": "Constant"
                             }
                         ],
-                        "keywords": [
-                            {
-                                "arg": "dtype",
-                                "value": {
-                                    "value": {
-                                        "id": "np",
-                                        "ctx": {
-                                            "node_type": "Load"
-                                        },
-                                        "node_type": "Name"
-                                    },
-                                    "attr": "int64",
-                                    "ctx": {
-                                        "node_type": "Load"
-                                    },
-                                    "node_type": "Attribute"
-                                },
-                                "node_type": "keyword"
-                            }
-                        ],
+                        "keywords": [],
                         "node_type": "Call"
                     },
                     "attr": "reshape",

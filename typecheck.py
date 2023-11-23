@@ -2,6 +2,13 @@ import ast
 
 import_aliases = {}
 
+class TensorType:
+    def __init__(self, size, data_type, type, device="cpu"):
+        self.size = size
+        self.device = device
+        self.data_type = data_type
+        self.type = type # numpy or torch
+
 # Parse a stmt list
 def parse_stmt_list(stmts):
     for elt in stmts:
@@ -41,24 +48,33 @@ def typecheck_expr(expr):
 
     # Function call
     if isinstance(expr, ast.Call):
+        typecheck_function_call(expr.func)
 
-        # If we are directly calling a function
-        if(hasattr(expr.func.value, "id")):
+def typecheck_function_call(func):
+    if(not hasattr(func, "value")): return 
 
-            ###################### PYTORCH BUILTIN #####################
-            if(expr.func.value.id == import_aliases["torch"]):
+    # Function acts on another function
+    if(hasattr(func.value, "func")):
+        typecheck_function_call(func.value.func)
+    
+    # If we are directly calling a function
+    elif(hasattr(func.value, "id")):
 
-                # torch.rand
-                if(expr.func.attr == "rand"):
-                    print("torch.rand call!")
+        ###################### PYTORCH BUILTIN #####################
+        if(func.value.id == import_aliases["torch"]):
 
-                # torch.tensor
-                elif(expr.func.attr == "tensor"):
-                    print("torch.tensor call!")
+            # torch.rand
+            if(func.attr == "rand"):
+                print("torch.rand call!")
 
-            ####################### NUMPY BUILTIN #####################
-            if(expr.func.value.id == import_aliases["numpy"]):
-                print("numpy fnnnn")
+            # torch.tensor
+            elif(func.attr == "tensor"):
+                print("torch.tensor call!")
+
+        ####################### NUMPY BUILTIN #####################
+        if(func.value.id == import_aliases["numpy"]):
+            print("numpy fnnnn")
+
 
 # Obtain the AST from the Python Script
 file_path = 'python.py' 

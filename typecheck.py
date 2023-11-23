@@ -1,13 +1,26 @@
 import ast
 
-import_aliases = {}
-
 class TensorType:
-    def __init__(self, size, data_type, type, device="cpu"):
+    def __init__(self, size, type, data_type=None, device=None):
         self.size = size
+        self.type = type 
         self.device = device
         self.data_type = data_type
-        self.type = type # numpy or torch
+        if(data_type == None): # Not sure if these defaults are correct
+            if(type == "numpy"): self.data_type = "float64"
+            elif(type == "torch"): self.data_type = "float32"
+        if(device == None):
+            self.device == "cpu"
+    def __str__(self):
+        return (f"(size={self.size}, type=\"{self.type}\", dtype=\"{self.data_type}\", device=\"{self.device}\")")
+
+class Context(dict):
+    def __str__(self):
+        items = [f"'{key}': {value if isinstance(value, TensorType) else value}" for key, value in self.items()]
+        return "\nContext - {" + ",\n           ".join(items) + "}"
+
+import_aliases = {}
+context = Context()
 
 # Parse a stmt list
 def parse_stmt_list(stmts):
@@ -33,11 +46,19 @@ def parse_stmt_list(stmts):
                     import_aliases[name] = name
                 else:
                     import_aliases[name] = alias
-                print("Aliases -", import_aliases) # For debugging
+                print("Import Aliases -", import_aliases) # For debugging
 
         # Assign!
         elif isinstance(elt, ast.Assign): 
-            typecheck_expr(elt.value)
+            
+            # We are assigning variables to a tensor, 
+            # add them to the context
+
+            t = typecheck_expr(elt.value)
+            if isinstance(t, TensorType):
+                for targ in elt.targets:
+                    context[targ.id] = t
+                    print(context)
 
         # Expression
         elif isinstance(elt, ast.Expr): 
@@ -46,12 +67,18 @@ def parse_stmt_list(stmts):
 # Typechecks an expression
 def typecheck_expr(expr):
 
-    # Function call
+    # Function call - check if it's a builtin numpy or torch function
     if isinstance(expr, ast.Call):
-        typecheck_function_call(expr.func)
+        return typecheck_function_call(expr)
 
-def typecheck_function_call(func):
-    if(not hasattr(func, "value")): return 
+def typecheck_function_call(expr):
+    if(not hasattr(expr, "func")): 
+        print(expr.lineno, "no func")
+        return
+    func = expr.func
+    if(not hasattr(func, "value")): 
+        print(expr.lineno, "no val")
+        return 
 
     # Function acts on another function
     if(hasattr(func.value, "func")):
@@ -65,16 +92,47 @@ def typecheck_function_call(func):
 
             # torch.rand
             if(func.attr == "rand"):
-                print("torch.rand call!")
+                size = [arg.value for arg in expr.args]
+                dtype, device = parse_keywords(expr)
+                t = TensorType(size = size, type = "torch", data_type = dtype, device=device)
+                return t
 
             # torch.tensor
             elif(func.attr == "tensor"):
-                print("torch.tensor call!")
+                size = obtain_manual_size(expr.args)
+                dtype, device = parse_keywords(expr)
+                t = TensorType(size = size, type = "torch", data_type = dtype, device=device)
+                return t
 
         ####################### NUMPY BUILTIN #####################
         if(func.value.id == import_aliases["numpy"]):
             print("numpy fnnnn")
 
+# Obtains tensor info (dtype and device) from function call args
+def parse_keywords(expr):
+    data_type = None
+    device = None
+    for keyword in expr.keywords: 
+        if(keyword.arg == "dtype"):
+            data_type = keyword.value.attr
+        elif(keyword.arg == "device"):
+            device = keyword.value.value
+    return data_type, device
+
+# CHECK THIS FUNCTION!!!
+def obtain_manual_size(args):
+    def helper(elts):
+        size = []
+        num_elts = len(elts)
+        for arg in elts:
+            if(hasattr(arg, "elts")):
+                res = helper(arg.elts)
+                res.append(num_elts)
+                return res
+        return [num_elts]
+    for arg in args:
+        if(hasattr(arg,"elts")):
+            return helper(arg.elts)
 
 # Obtain the AST from the Python Script
 file_path = 'python.py' 

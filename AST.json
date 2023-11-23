@@ -57,7 +57,35 @@
                         "node_type": "Constant"
                     }
                 ],
-                "keywords": [],
+                "keywords": [
+                    {
+                        "arg": "dtype",
+                        "value": {
+                            "value": {
+                                "id": "torch",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "attr": "float32",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Attribute"
+                        },
+                        "node_type": "keyword"
+                    },
+                    {
+                        "arg": "device",
+                        "value": {
+                            "value": "cuda",
+                            "kind": null,
+                            "node_type": "Constant"
+                        },
+                        "node_type": "keyword"
+                    }
+                ],
                 "node_type": "Call"
             },
             "type_comment": null,
@@ -146,7 +174,35 @@
                         "node_type": "List"
                     }
                 ],
-                "keywords": [],
+                "keywords": [
+                    {
+                        "arg": "dtype",
+                        "value": {
+                            "value": {
+                                "id": "torch",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "attr": "float32",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Attribute"
+                        },
+                        "node_type": "keyword"
+                    },
+                    {
+                        "arg": "device",
+                        "value": {
+                            "value": "cuda",
+                            "kind": null,
+                            "node_type": "Constant"
+                        },
+                        "node_type": "keyword"
+                    }
+                ],
                 "node_type": "Call"
             },
             "type_comment": null,

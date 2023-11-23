@@ -1,5 +1,5 @@
 ## Setup / Installation
-Install yojson (for JSON reading)
+Install yojson (for JSON reading in OCaml)
 ```
 brew install ocaml opam
 opam install yojson

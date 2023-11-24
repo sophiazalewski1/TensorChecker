@@ -75,15 +75,6 @@
                             "node_type": "Attribute"
                         },
                         "node_type": "keyword"
-                    },
-                    {
-                        "arg": "device",
-                        "value": {
-                            "value": "cuda",
-                            "kind": null,
-                            "node_type": "Constant"
-                        },
-                        "node_type": "keyword"
                     }
                 ],
                 "node_type": "Call"
@@ -192,72 +183,6 @@
                             "node_type": "Attribute"
                         },
                         "node_type": "keyword"
-                    },
-                    {
-                        "arg": "device",
-                        "value": {
-                            "value": "cuda",
-                            "kind": null,
-                            "node_type": "Constant"
-                        },
-                        "node_type": "keyword"
-                    }
-                ],
-                "node_type": "Call"
-            },
-            "type_comment": null,
-            "node_type": "Assign"
-        },
-        {
-            "targets": [
-                {
-                    "id": "z",
-                    "ctx": {
-                        "node_type": "Store"
-                    },
-                    "node_type": "Name"
-                }
-            ],
-            "value": {
-                "func": {
-                    "value": {
-                        "id": "np",
-                        "ctx": {
-                            "node_type": "Load"
-                        },
-                        "node_type": "Name"
-                    },
-                    "attr": "arange",
-                    "ctx": {
-                        "node_type": "Load"
-                    },
-                    "node_type": "Attribute"
-                },
-                "args": [
-                    {
-                        "value": 15,
-                        "kind": null,
-                        "node_type": "Constant"
-                    }
-                ],
-                "keywords": [
-                    {
-                        "arg": "dtype",
-                        "value": {
-                            "value": {
-                                "id": "np",
-                                "ctx": {
-                                    "node_type": "Load"
-                                },
-                                "node_type": "Name"
-                            },
-                            "attr": "int64",
-                            "ctx": {
-                                "node_type": "Load"
-                            },
-                            "node_type": "Attribute"
-                        },
-                        "node_type": "keyword"
                     }
                 ],
                 "node_type": "Call"
@@ -286,7 +211,7 @@
                                 },
                                 "node_type": "Name"
                             },
-                            "attr": "arrange",
+                            "attr": "arange",
                             "ctx": {
                                 "node_type": "Load"
                             },
@@ -325,6 +250,122 @@
             },
             "type_comment": null,
             "node_type": "Assign"
+        },
+        {
+            "value": {
+                "func": {
+                    "value": {
+                        "id": "x",
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "Name"
+                    },
+                    "attr": "reshape",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Attribute"
+                },
+                "args": [
+                    {
+                        "value": 1,
+                        "kind": null,
+                        "node_type": "Constant"
+                    },
+                    {
+                        "value": 4,
+                        "kind": null,
+                        "node_type": "Constant"
+                    }
+                ],
+                "keywords": [],
+                "node_type": "Call"
+            },
+            "node_type": "Expr"
+        },
+        {
+            "targets": [
+                {
+                    "id": "w",
+                    "ctx": {
+                        "node_type": "Store"
+                    },
+                    "node_type": "Name"
+                }
+            ],
+            "value": {
+                "func": {
+                    "value": {
+                        "id": "np",
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "Name"
+                    },
+                    "attr": "arange",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Attribute"
+                },
+                "args": [
+                    {
+                        "value": 0,
+                        "kind": null,
+                        "node_type": "Constant"
+                    },
+                    {
+                        "value": 5,
+                        "kind": null,
+                        "node_type": "Constant"
+                    },
+                    {
+                        "value": 0.5,
+                        "kind": null,
+                        "node_type": "Constant"
+                    }
+                ],
+                "keywords": [
+                    {
+                        "arg": "dtype",
+                        "value": {
+                            "id": "int",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "node_type": "keyword"
+                    }
+                ],
+                "node_type": "Call"
+            },
+            "type_comment": null,
+            "node_type": "Assign"
+        },
+        {
+            "value": {
+                "func": {
+                    "id": "print",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Name"
+                },
+                "args": [
+                    {
+                        "id": "p",
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "Name"
+                    }
+                ],
+                "keywords": [],
+                "node_type": "Call"
+            },
+            "node_type": "Expr"
         },
         {
             "targets": [

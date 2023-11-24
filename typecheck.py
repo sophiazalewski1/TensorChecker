@@ -62,29 +62,42 @@ def parse_stmt_list(stmts):
 
         # Expression
         elif isinstance(elt, ast.Expr): 
+            print("expression!")
             pass
+        
+        else:
+            print("other")
 
 # Typechecks an expression
 def typecheck_expr(expr):
 
     # Function call - check if it's a builtin numpy or torch function
     if isinstance(expr, ast.Call):
-        return typecheck_function_call(expr)
+
+        if(hasattr(expr, "func")):
+            return typecheck_function_call(expr)
+    
+    else:
+        print("expr not call",expr,expr.lineno)
 
 def typecheck_function_call(expr):
     if(not hasattr(expr, "func")): 
-        print(expr.lineno, "no func")
+        print(expr.lineno, "no func", expr)
         return
     func = expr.func
     if(not hasattr(func, "value")): 
         print(expr.lineno, "no val")
         return 
 
-    # Function acts on another function
+    # Function acts on a value
+    # ex. x.reshape(...)
     if(hasattr(func.value, "func")):
-        typecheck_function_call(func.value.func)
+        print("HEREEE")
+        t = typecheck_function_call(func.value)
+        print(t)
     
-    # If we are directly calling a function
+    # Function is a direct call
+    # ex. torch.tensor(...)
     elif(hasattr(func.value, "id")):
 
         ###################### PYTORCH BUILTIN #####################
@@ -106,7 +119,19 @@ def typecheck_function_call(expr):
 
         ####################### NUMPY BUILTIN #####################
         if(func.value.id == import_aliases["numpy"]):
-            print("numpy fnnnn")
+            
+            # np.arrange
+            if(func.attr == "arange"):
+                args = [arg.value for arg in expr.args]
+                if(len(args) == 1):
+                    size = args[0] # arange(stop)
+                elif(len(args) == 2):
+                    size = args[1] - args[0] #arange(start, stop)
+                elif(len(args) == 3):
+                    size = int((args[1] - args[0])/args[2]) # arange(start, stop, step)
+                dtype, device = parse_keywords(expr)
+                t = TensorType(size = size, type = "numpy", data_type = dtype, device=device)
+                return t
 
 # Obtains tensor info (dtype and device) from function call args
 def parse_keywords(expr):
@@ -114,7 +139,10 @@ def parse_keywords(expr):
     device = None
     for keyword in expr.keywords: 
         if(keyword.arg == "dtype"):
-            data_type = keyword.value.attr
+            if (hasattr(keyword.value, "attr")):
+                data_type = keyword.value.attr
+            elif (hasattr(keyword.value, "id")):
+                data_type = keyword.value.id
         elif(keyword.arg == "device"):
             device = keyword.value.value
     return data_type, device

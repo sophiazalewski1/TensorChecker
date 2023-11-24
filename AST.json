@@ -198,6 +198,39 @@
             },
             "type_comment": null,
             "node_type": "Assign"
+        },
+        {
+            "targets": [
+                {
+                    "id": "p",
+                    "ctx": {
+                        "node_type": "Store"
+                    },
+                    "node_type": "Name"
+                }
+            ],
+            "value": {
+                "left": {
+                    "id": "x",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Name"
+                },
+                "op": {
+                    "node_type": "Add"
+                },
+                "right": {
+                    "id": "y",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Name"
+                },
+                "node_type": "BinOp"
+            },
+            "type_comment": null,
+            "node_type": "Assign"
         }
     ],
     "type_ignores": [],

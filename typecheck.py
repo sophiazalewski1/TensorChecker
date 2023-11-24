@@ -76,15 +76,27 @@ def parse_stmt_list(stmts):
         elif isinstance(elt, ast.Expr): 
             print("expression")
             pass
-        
+
         else:
             print("other")
 
 # Typechecks an expression
 def typecheck_expr(expr):
 
+    if isinstance(expr, ast.BinOp):
+            # ALSO CHECK DEVICES AND DTYPEEEE!!!!!!!!
+            left = typecheck_expr(expr.left)
+            right = typecheck_expr(expr.right)
+            if(isinstance(left, TensorType) and isinstance(right, TensorType)):
+                lsize = left.size
+                rsize = right.size
+                if(lsize != rsize):
+                    print("Cannot add tensors of differing sizes!")
+                    return
+                return left
+
     # Function call 
-    if isinstance(expr, ast.Call):
+    elif isinstance(expr, ast.Call):
         if(hasattr(expr, "func")):
             return typecheck_function_call(expr)
     

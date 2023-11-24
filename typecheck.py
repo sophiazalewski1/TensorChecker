@@ -1,4 +1,5 @@
 import ast
+from functools import reduce
 
 class TensorType:
     def __init__(self, size, type, data_type=None, device=None):
@@ -13,6 +14,11 @@ class TensorType:
             self.device == "cpu"
     def __str__(self):
         return (f"(size={self.size}, type=\"{self.type}\", dtype=\"{self.data_type}\", device=\"{self.device}\")")
+class FunctionType:
+    def __init__(self, name):
+        self.name = name
+    def __str__(self):
+        return self.name
 
 class Context(dict):
     def __str__(self):
@@ -42,10 +48,16 @@ def parse_stmt_list(stmts):
             for item in elt.names:
                 name = item.name
                 alias = item.asname
-                if(alias == None):
-                    import_aliases[name] = name
-                else:
-                    import_aliases[name] = alias
+                if(alias == None): import_aliases[name] = name
+                else: import_aliases[alias] = name
+                print("Import Aliases -", import_aliases) # For debugging
+        elif isinstance(elt, ast.ImportFrom):
+            for item in elt.names:
+                name = item.name
+                alias = item.asname
+                wholename = elt.module + "." + name
+                if(alias == None): import_aliases[name] = wholename
+                else: import_aliases[alias] = wholename
                 print("Import Aliases -", import_aliases) # For debugging
 
         # Assign!
@@ -62,7 +74,7 @@ def parse_stmt_list(stmts):
 
         # Expression
         elif isinstance(elt, ast.Expr): 
-            print("expression!")
+            print("expression")
             pass
         
         else:
@@ -71,67 +83,88 @@ def parse_stmt_list(stmts):
 # Typechecks an expression
 def typecheck_expr(expr):
 
-    # Function call - check if it's a builtin numpy or torch function
+    # Function call 
     if isinstance(expr, ast.Call):
-
         if(hasattr(expr, "func")):
             return typecheck_function_call(expr)
     
+    # Attribute
+    elif isinstance(expr, ast.Attribute):
+        body = typecheck_expr(expr.value)
+        if(isinstance(body, FunctionType)):
+            name = body.name + "." + expr.attr
+            if name in import_aliases: name = import_aliases[name]
+            return FunctionType(name)
+
+    elif isinstance(expr, ast.Name):
+        # name is a variable, lookup its type
+        # ex. x.reshape
+        name = expr.id
+        if name in context: return context[name]
+
+        # name is a bultin, ex. "torch", "numpy"
+        # ex. TORCH.tesnor
+        if name in import_aliases: 
+            name = import_aliases[name]
+            if(hasattr(expr, "attr")):
+                name = name + "." + expr.attr
+                if name in import_aliases: 
+                    return FunctionType(import_aliases[name])
+        return FunctionType(name)
+
     else:
         print("expr not call",expr,expr.lineno)
 
+
 def typecheck_function_call(expr):
-    if(not hasattr(expr, "func")): 
-        print(expr.lineno, "no func", expr)
-        return
+
     func = expr.func
-    if(not hasattr(func, "value")): 
-        print(expr.lineno, "no val")
-        return 
+    body = typecheck_expr(expr.func.value)
 
-    # Function acts on a value
-    # ex. x.reshape(...)
-    if(hasattr(func.value, "func")):
-        print("HEREEE")
-        t = typecheck_function_call(func.value)
-        print(t)
-    
-    # Function is a direct call
-    # ex. torch.tensor(...)
-    elif(hasattr(func.value, "id")):
+    # Handles torch.rand, numpy.random.rand calls
+    if(func.attr == "rand"):
+        size = [arg.value for arg in expr.args]
+        dtype, device = parse_keywords(expr)
+        if (body.name == "torch"):
+            type = "torch"
+        elif (body.name == "numpy.random"):
+            type = "numpy"
+        t = TensorType(size = size, type = type, data_type = dtype, device=device)
+        return t
 
-        ###################### PYTORCH BUILTIN #####################
-        if(func.value.id == import_aliases["torch"]):
+    elif(func.attr == "reshape"):
+        new_size = [arg.value for arg in expr.args]
+        if(isinstance(body, TensorType)):
+            elts1 = reduce((lambda x, y: x * y), body.size)
+            elts2 = reduce((lambda x, y: x * y), new_size)
+            if(elts1 != elts2):
+                print("Invalid reshape!")
+                return
+            t = TensorType(size=new_size, type=body.type, device=body.device, data_type=body.data_type)
+            return t
+        else:
+            print("Cannot call reshape on non-tensor")
+            return
 
-            # torch.rand
-            if(func.attr == "rand"):
-                size = [arg.value for arg in expr.args]
-                dtype, device = parse_keywords(expr)
-                t = TensorType(size = size, type = "torch", data_type = dtype, device=device)
-                return t
+    # Handles torch.tensor calls
+    elif(func.attr == "tensor"):
+        size = obtain_manual_size(expr.args)
+        dtype, device = parse_keywords(expr)
+        t = TensorType(size = size, type = "torch", data_type = dtype, device=device)
+        return t
 
-            # torch.tensor
-            elif(func.attr == "tensor"):
-                size = obtain_manual_size(expr.args)
-                dtype, device = parse_keywords(expr)
-                t = TensorType(size = size, type = "torch", data_type = dtype, device=device)
-                return t
-
-        ####################### NUMPY BUILTIN #####################
-        if(func.value.id == import_aliases["numpy"]):
-            
-            # np.arrange
-            if(func.attr == "arange"):
-                args = [arg.value for arg in expr.args]
-                if(len(args) == 1):
-                    size = args[0] # arange(stop)
-                elif(len(args) == 2):
-                    size = args[1] - args[0] #arange(start, stop)
-                elif(len(args) == 3):
-                    size = int((args[1] - args[0])/args[2]) # arange(start, stop, step)
-                dtype, device = parse_keywords(expr)
-                t = TensorType(size = size, type = "numpy", data_type = dtype, device=device)
-                return t
+    # Handles np.arrange
+    if(func.attr == "arange"):
+        args = [arg.value for arg in expr.args]
+        if(len(args) == 1):
+            size = args[0] # arange(stop)
+        elif(len(args) == 2):
+            size = args[1] - args[0] #arange(start, stop)
+        elif(len(args) == 3):
+            size = int((args[1] - args[0])/args[2]) # arange(start, stop, step)
+        dtype, device = parse_keywords(expr)
+        t = TensorType(size = size, type = "numpy", data_type = dtype, device=device)
+        return t
 
 # Obtains tensor info (dtype and device) from function call args
 def parse_keywords(expr):

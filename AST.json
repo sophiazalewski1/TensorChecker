@@ -57,12 +57,12 @@
                 },
                 "args": [
                     {
-                        "value": 4,
+                        "value": 5,
                         "kind": null,
                         "node_type": "Constant"
                     },
                     {
-                        "value": 5,
+                        "value": 1,
                         "kind": null,
                         "node_type": "Constant"
                     }
@@ -86,13 +86,13 @@
             "value": {
                 "func": {
                     "value": {
-                        "id": "x",
+                        "id": "torch",
                         "ctx": {
                             "node_type": "Load"
                         },
                         "node_type": "Name"
                     },
-                    "attr": "reshape",
+                    "attr": "rand",
                     "ctx": {
                         "node_type": "Load"
                     },
@@ -100,12 +100,12 @@
                 },
                 "args": [
                     {
-                        "value": 5,
+                        "value": 1,
                         "kind": null,
                         "node_type": "Constant"
                     },
                     {
-                        "value": 4,
+                        "value": 5,
                         "kind": null,
                         "node_type": "Constant"
                     }
@@ -127,89 +127,6 @@
                 }
             ],
             "value": {
-                "func": {
-                    "value": {
-                        "func": {
-                            "value": {
-                                "value": {
-                                    "id": "np",
-                                    "ctx": {
-                                        "node_type": "Load"
-                                    },
-                                    "node_type": "Name"
-                                },
-                                "attr": "random",
-                                "ctx": {
-                                    "node_type": "Load"
-                                },
-                                "node_type": "Attribute"
-                            },
-                            "attr": "rand",
-                            "ctx": {
-                                "node_type": "Load"
-                            },
-                            "node_type": "Attribute"
-                        },
-                        "args": [
-                            {
-                                "value": 4,
-                                "kind": null,
-                                "node_type": "Constant"
-                            },
-                            {
-                                "value": 5,
-                                "kind": null,
-                                "node_type": "Constant"
-                            }
-                        ],
-                        "keywords": [
-                            {
-                                "arg": "device",
-                                "value": {
-                                    "value": "cuda",
-                                    "kind": null,
-                                    "node_type": "Constant"
-                                },
-                                "node_type": "keyword"
-                            }
-                        ],
-                        "node_type": "Call"
-                    },
-                    "attr": "reshape",
-                    "ctx": {
-                        "node_type": "Load"
-                    },
-                    "node_type": "Attribute"
-                },
-                "args": [
-                    {
-                        "value": 20,
-                        "kind": null,
-                        "node_type": "Constant"
-                    },
-                    {
-                        "value": 1,
-                        "kind": null,
-                        "node_type": "Constant"
-                    }
-                ],
-                "keywords": [],
-                "node_type": "Call"
-            },
-            "type_comment": null,
-            "node_type": "Assign"
-        },
-        {
-            "targets": [
-                {
-                    "id": "p",
-                    "ctx": {
-                        "node_type": "Store"
-                    },
-                    "node_type": "Name"
-                }
-            ],
-            "value": {
                 "left": {
                     "id": "x",
                     "ctx": {
@@ -218,7 +135,7 @@
                     "node_type": "Name"
                 },
                 "op": {
-                    "node_type": "Add"
+                    "node_type": "MatMult"
                 },
                 "right": {
                     "id": "y",

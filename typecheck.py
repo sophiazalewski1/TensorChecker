@@ -1,6 +1,9 @@
 import ast
 from functools import reduce
 
+############################## DATA TYPES ################################
+
+# Stores info about a tensor (size, type, dtype, device)
 class TensorType:
     def __init__(self, size, type, data_type=None, device=None):
         self.size = size
@@ -20,6 +23,7 @@ class FunctionType:
     def __str__(self):
         return self.name
 
+# Maps names to their correspinding tensor info
 class Context(dict):
     def __str__(self):
         items = [f"'{key}': {value if isinstance(value, TensorType) else value}" for key, value in self.items()]
@@ -27,6 +31,8 @@ class Context(dict):
 
 import_aliases = {}
 context = Context()
+
+############################## TYPECHECKING ################################
 
 # Parse a stmt list
 def parse_stmt_list(stmts):
@@ -80,20 +86,113 @@ def parse_stmt_list(stmts):
         else:
             print("other")
 
+################################ HELPERS #################################
+
+# Checks if tensors are on the same device and have same dtype
+def tensors_compatable(tensor1, tensor2):
+    if not isinstance(tensor1, TensorType):
+        return True # Any operation between non-tensors is compatable by default
+    if not isinstance(tensor2, TensorType):
+        return True # Any operation between non-tensors is compatable by default
+    res = True
+    if(tensor1.type != tensor2.type):
+        print("Types of tensors do not match!")
+        res = False
+    if(tensor1.device != tensor2.device):
+        print("Devices of tensors do not match!")
+        res = False
+    return res
+
+# CHECK THIS FUNCTION!!!
+# Obtains the size from function calls with explit tensor value declarations
+# ex. torch.tensor([[-1,-1],[2,4]])
+def obtain_manual_size(args):
+    def helper(elts):
+        size = []
+        num_elts = len(elts)
+        for arg in elts:
+            if(hasattr(arg, "elts")):
+                res = helper(arg.elts)
+                res.append(num_elts)
+                return res
+        return [num_elts]
+    for arg in args:
+        if(hasattr(arg,"elts")):
+            return helper(arg.elts)
+        
+# Obtains tensor info (dtype and device) from function call args
+def parse_keywords(expr):
+    data_type = None
+    device = None
+    for keyword in expr.keywords: 
+        if(keyword.arg == "dtype"):
+            if (hasattr(keyword.value, "attr")):
+                data_type = keyword.value.attr
+            elif (hasattr(keyword.value, "id")):
+                data_type = keyword.value.id
+        elif(keyword.arg == "device"):
+            device = keyword.value.value
+    return data_type, device
+
+##########################################################################
+
 # Typechecks an expression
 def typecheck_expr(expr):
 
     if isinstance(expr, ast.BinOp):
-            # ALSO CHECK DEVICES AND DTYPEEEE!!!!!!!!
             left = typecheck_expr(expr.left)
             right = typecheck_expr(expr.right)
-            if(isinstance(left, TensorType) and isinstance(right, TensorType)):
-                lsize = left.size
-                rsize = right.size
-                if(lsize != rsize):
-                    print("Cannot add tensors of differing sizes!")
+
+            # Dealing with at least one tensor
+            if(isinstance(left, TensorType) or isinstance(right, TensorType)):
+                
+                # Check if types and devices are compatible
+                if not tensors_compatable(left,right):
                     return
-                return left
+                
+                # Add/Subtract tensors
+                if(isinstance(expr.op, ast.Add) or isinstance(expr.op, ast.Sub)):
+                    
+                    # Adding tensors of same exact size
+                    if(isinstance(left, TensorType) and 
+                       isinstance(right, TensorType) and 
+                       left.size == right.size):
+                        return left
+                    
+                    # Scalar Addition
+                    elif(isinstance(left, TensorType) and left.size == [1]): return right
+                    elif(isinstance(left, TensorType) and not isinstance(right, TensorType)): return left
+                    elif(isinstance(right, TensorType) and right.size == [1]): return left
+                    elif(isinstance(right, TensorType) and not isinstance(left, TensorType)): return right
+
+                    # ADD OTHER CASES
+                    else:
+                        print("Mismatch!")
+                        return
+
+                # Elementwise Mult Tensors
+                elif(isinstance(expr.op, ast.Mult)):
+
+                    # Mult tensor of compatible sizes (nxm) x (mxn)
+                    if(isinstance(left, TensorType) and 
+                       isinstance(right, TensorType) and 
+                       left.size == right.size):
+                        return left
+
+                    # Scalar Multiplication
+                    elif(isinstance(left, TensorType) and left.size == [1]): return right
+                    elif(isinstance(left, TensorType) and not isinstance(right, TensorType)): return left
+                    elif(isinstance(right, TensorType) and right.size == [1]): return left
+                    elif(isinstance(right, TensorType) and not isinstance(left, TensorType)): return right
+
+                    # ADD OTHER CASES
+                    else:
+                        print("Mismatch!")
+                        return
+
+                # Matrix Multiplication   
+                elif(isinstance(expr.op, ast.MatMult)):
+                    pass
 
     # Function call 
     elif isinstance(expr, ast.Call):
@@ -177,35 +276,6 @@ def typecheck_function_call(expr):
         dtype, device = parse_keywords(expr)
         t = TensorType(size = size, type = "numpy", data_type = dtype, device=device)
         return t
-
-# Obtains tensor info (dtype and device) from function call args
-def parse_keywords(expr):
-    data_type = None
-    device = None
-    for keyword in expr.keywords: 
-        if(keyword.arg == "dtype"):
-            if (hasattr(keyword.value, "attr")):
-                data_type = keyword.value.attr
-            elif (hasattr(keyword.value, "id")):
-                data_type = keyword.value.id
-        elif(keyword.arg == "device"):
-            device = keyword.value.value
-    return data_type, device
-
-# CHECK THIS FUNCTION!!!
-def obtain_manual_size(args):
-    def helper(elts):
-        size = []
-        num_elts = len(elts)
-        for arg in elts:
-            if(hasattr(arg, "elts")):
-                res = helper(arg.elts)
-                res.append(num_elts)
-                return res
-        return [num_elts]
-    for arg in args:
-        if(hasattr(arg,"elts")):
-            return helper(arg.elts)
 
 # Obtain the AST from the Python Script
 file_path = 'python.py' 

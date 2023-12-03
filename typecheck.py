@@ -1,5 +1,6 @@
 import ast
 from functools import reduce
+import sys
 
 ############################## DATA TYPES ################################
 
@@ -135,6 +136,71 @@ def parse_keywords(expr):
     return data_type, device
 
 ##########################################################################
+# implements rules defined in matmul.py
+def check_size_matmul(size1, size2):
+    # inner sizes match
+    if size1[-1] != size2[-2]:
+        print("Matmul: dimensions mismatch")
+        return 
+    res_dims = [size1[-2], size2[-1]]
+    size1 = size1[:-2]
+    size2 = size2[:-2]
+    # check if batch dimensions broadcast
+    # automatically broadcast extra dims
+    batch_dims = []
+    if len(size1) < len(size2):
+        batch_dims = size2[:len(size2) - len(size1)]
+        size2 = size2[len(size2) - len(size1):]
+    elif len(size2) < len(size1):
+        batch_dims = size1[:len(size1) - len(size2)] 
+        size1 = size2[len(size1) - len(size2):]
+
+    for (n1,n2) in zip(size1, size2):
+        if n1 == 1:
+            batch_dims.append(n2)
+        elif n2 == 1:
+            batch_dims.append(n1)
+        else:
+            #TODO make this message better by getting index of dims that are mismatching
+            print("Matmul: cannot broadcast nonsingleton dimension")
+            return
+    res_dims = batch_dims + res_dims
+    return res_dims
+
+def typecheck_matmul(left, right):
+    # check tensors are on the same device
+    remove_left = False
+    remove_right = False
+
+    if left.device != right.device:
+        print(f"Matmul: Device mismatch. Tensor 1 has device {left.device} while Tensor 2 has device {right.device}")
+        return
+    # check tensors are the same dtype
+    elif left.data_type != right.data_type:
+        print(f"Matmul: Data type mismatch. Tensor 1 has data type {left.data_type} while Tensor 2 has data type {right.data_type}")
+        return
+    # if left/right are 1 dimensional, add dimension, flag for removal
+    dims_left = left.size
+    dims_right = right.size
+    if len(dims_left) == 1:
+        dims_left = [1] + left.size
+        remove_left = True
+    elif len(dims_right) == 1:
+        dims_right = right.size + [1]
+        remove_right = True
+        print(dims_right)
+    res_dim = check_size_matmul(dims_left, dims_right)
+    
+    if res_dim is None:
+        return
+    # cleanup added dims
+    if remove_left:
+        res_dim = res_dim[1:]
+    if remove_right:
+        res_dim = res_dim[:-1]
+    return res_dim
+    
+##########################################################################
 
 # Typechecks an expression
 def typecheck_expr(expr):
@@ -192,7 +258,16 @@ def typecheck_expr(expr):
 
                 # Matrix Multiplication   
                 elif(isinstance(expr.op, ast.MatMult)):
-                    pass
+                    if (isinstance(left, TensorType) and 
+                        isinstance(right,TensorType)):
+                        new_dims = typecheck_matmul(left, right)
+                        if new_dims is None:
+                            return 
+                        t_type = TensorType(new_dims, left.data_type, left.device)
+                        return t_type
+                    else:
+                        print("both left and right side of matrix mul have to be tensor types")
+                        return
 
     # Function call 
     elif isinstance(expr, ast.Call):
@@ -278,7 +353,7 @@ def typecheck_function_call(expr):
         return t
 
 # Obtain the AST from the Python Script
-file_path = 'python.py' 
+file_path = "python.py" if len(sys.argv) < 2 else sys.argv[1]
 with open(file_path, 'r') as file:
     file_content = file.read()
 ast_ = ast.parse(file_content)

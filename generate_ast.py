@@ -1,5 +1,6 @@
 import ast
 import json
+import sys
 
 def ast_to_dict(node):
     if isinstance(node, ast.AST):
@@ -11,7 +12,7 @@ def ast_to_dict(node):
     else:
         return node
 
-file_path = 'python.py'
+file_path = "python.py" if len(sys.argv) < 2 else sys.argv[1]
 output_file_path = 'AST.json'
 
 with open(file_path, 'r') as file:

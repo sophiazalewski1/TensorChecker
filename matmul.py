@@ -39,7 +39,7 @@ https://pytorch.org/docs/stable/generated/torch.matmul.html
     (i.e. the matrix dimensions) are different. out will be a (j,k,n,p) tensor.
 
         this does not work (dimension 1 mismatch)
-        x = torch.rand(8,7,2,3)
+        x = torch.rand(1,7,2,3)
         y = torch.rand(5,3,3,2)
         x @ y
 
@@ -73,8 +73,9 @@ https://pytorch.org/docs/stable/generated/torch.matmul.html
 
 import torch
 
-x = torch.rand(4, 1, 3, 3)
-y = torch.rand(3)
+x = torch.rand(3,2)
+y = torch.rand(2,3)
+z = torch.rand(3,4)
 
-z = x @ y
-print(z.shape) # shape 4,4,1,3,2
+w = x @ y @ z 
+print(w.shape) # shape 4,4,1,3,2

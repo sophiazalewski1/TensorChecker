@@ -76,6 +76,156 @@
         {
             "targets": [
                 {
+                    "id": "a",
+                    "ctx": {
+                        "node_type": "Store"
+                    },
+                    "node_type": "Name"
+                }
+            ],
+            "value": {
+                "func": {
+                    "value": {
+                        "id": "np",
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "Name"
+                    },
+                    "attr": "stack",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Attribute"
+                },
+                "args": [
+                    {
+                        "elts": [
+                            {
+                                "id": "x",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            {
+                                "id": "x",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            }
+                        ],
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "List"
+                    }
+                ],
+                "keywords": [
+                    {
+                        "arg": "axis",
+                        "value": {
+                            "value": 0,
+                            "kind": null,
+                            "node_type": "Constant"
+                        },
+                        "node_type": "keyword"
+                    }
+                ],
+                "node_type": "Call"
+            },
+            "type_comment": null,
+            "node_type": "Assign"
+        },
+        {
+            "targets": [
+                {
+                    "id": "a",
+                    "ctx": {
+                        "node_type": "Store"
+                    },
+                    "node_type": "Name"
+                }
+            ],
+            "value": {
+                "func": {
+                    "value": {
+                        "id": "np",
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "Name"
+                    },
+                    "attr": "stack",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Attribute"
+                },
+                "args": [
+                    {
+                        "elt": {
+                            "id": "x",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "generators": [
+                            {
+                                "target": {
+                                    "id": "i",
+                                    "ctx": {
+                                        "node_type": "Store"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "iter": {
+                                    "func": {
+                                        "id": "range",
+                                        "ctx": {
+                                            "node_type": "Load"
+                                        },
+                                        "node_type": "Name"
+                                    },
+                                    "args": [
+                                        {
+                                            "value": 10,
+                                            "kind": null,
+                                            "node_type": "Constant"
+                                        }
+                                    ],
+                                    "keywords": [],
+                                    "node_type": "Call"
+                                },
+                                "ifs": [],
+                                "is_async": 0,
+                                "node_type": "comprehension"
+                            }
+                        ],
+                        "node_type": "ListComp"
+                    }
+                ],
+                "keywords": [
+                    {
+                        "arg": "axis",
+                        "value": {
+                            "value": 0,
+                            "kind": null,
+                            "node_type": "Constant"
+                        },
+                        "node_type": "keyword"
+                    }
+                ],
+                "node_type": "Call"
+            },
+            "type_comment": null,
+            "node_type": "Assign"
+        },
+        {
+            "targets": [
+                {
                     "id": "y",
                     "ctx": {
                         "node_type": "Store"

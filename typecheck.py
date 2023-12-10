@@ -3,6 +3,7 @@ from functools import reduce
 import sys
 from datatypes import *
 from helpers import *
+import numpy as np
 
 import_aliases = {} # maps imports to their user-defined aliases, 
                      # ex. import numpy as np -> name : numpy, alias : np
@@ -148,8 +149,39 @@ def typecheck_function_call(expr, context):
     func = expr.func
     body = typecheck_expr(expr.func.value, context)
 
+    if func.attr == "stack" or "concatenate":
+        dtype, device = parse_keywords(expr)
+        axis = None
+        if(func.attr == "stack"): 
+            axis = 0
+        size = []
+        for kwarg in expr.keywords: # Determine axis
+            if kwarg.arg == "axis":
+                axis = kwarg.value.value
+        for arg in expr.args: # Determine elements
+            if hasattr(arg, "elts"):
+                for elt in arg.elts:
+                    t = typecheck_expr(elt, context)
+                    if func.attr == "concat":
+                        if (size == []):
+                            size = t.size
+                        elif (t.size != size):
+                            print("cannot stack tensors of differing sizes!")
+                            return
+                    elif func.attr == "concatenate":
+                        tsize = t.size
+                        if axis == None:
+                            tsize = [np.prod(tsize)] # Flatten 
+
+        if axis >= len(size) or axis < 0:
+            print("axis out of bounds")
+            return
+        new_size = size[0:axis] + [1] + size[axis:]
+        t = Tensor(size=new_size, type=import_aliases[expr.func.value.id], data_type=dtype, device=device)
+        return t
+
     # Handles torch.rand, numpy.random.rand calls
-    if func.attr == "rand":
+    elif func.attr == "rand":
         size = [arg.value for arg in expr.args]
         dtype, device = parse_keywords(expr)
         if body.name == "torch":

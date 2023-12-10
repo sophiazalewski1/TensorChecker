@@ -33,6 +33,7 @@ def parse_keywords(expr):
             device = keyword.value.value
     return data_type, device
 
+
 ################# TYPE (Torch vs. Numpy) + DEVICE CHECKING #####################
 
 # Checks if tensors are on the same device and have same dtype
@@ -163,7 +164,7 @@ def typecheck_matmul(left : Type, right : Type) -> Type:
             res_dim = res_dim[:-2] + res_dim[-1:]
         if remove_right:
             res_dim = res_dim[:-1]
-        t_type = Tensor(res_dim, left.data_type, left.device)
+        t_type = Tensor(res_dim, left.type, left.data_type, left.device)
         return t_type
     else:
         print("both left and right side of matrix mul have to be tensor types")

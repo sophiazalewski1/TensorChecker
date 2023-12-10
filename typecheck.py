@@ -81,7 +81,6 @@ def parse_stmt_list(stmts, context):
 ##############################   EXPRESSIONS   #################################
 ################################################################################
 
-
 # Typechecks an expression for a given context
 def typecheck_expr(expr, context):
 
@@ -143,13 +142,25 @@ def typecheck_expr(expr, context):
 ############################   FUNCTION CALLS   ################################
 ################################################################################
 
-
 def typecheck_function_call(expr, context):
 
     func = expr.func
     body = typecheck_expr(expr.func.value, context)
 
-    if (func.attr == "stack" or func.attr == "concatenate"):
+    if (func.attr == "multiply"):
+        t1 = typecheck_expr(expr.args[0], context)
+        t2 = typecheck_expr(expr.args[1], context)
+        return typecheck_mult(t1, t2)
+    
+    elif (func.attr == "add" or func.attr == "subtract"):
+        t1 = typecheck_expr(expr.args[0], context)
+        t2 = typecheck_expr(expr.args[1], context)
+        return typecheck_add_sub(t1, t2)
+    
+    elif (func.attr == "sqrt" or func.attr == "power"):
+        return typecheck_expr(expr.args[0], context)
+
+    elif (func.attr == "stack" or func.attr == "concatenate" or func.attr == "cat"):
         dtype, device = parse_keywords(expr)
         axis = None
         if(func.attr == "stack"): 
@@ -179,6 +190,7 @@ def typecheck_function_call(expr, context):
                             if (size[0:axis] == tsize[0:axis] and size[axis+1:] == tsize[axis+1:]):
                                 size[axis] += tsize[axis]
         if(func.attr == "stack"):
+            print("here",size)
             if axis != None and (axis >= len(size) or axis < 0):
                 print("axis out of bounds", axis)
                 return

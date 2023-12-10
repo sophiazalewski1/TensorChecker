@@ -6,6 +6,6 @@ x = torch.rand(5,1)
 y = torch.rand(1,5)
 
 a = np.stack([x,x],axis=0)
-b = np.stack([x,y],axis=0)
+b = np.concatenate([x,x,x,x],axis=1)
 
-z = x @ y
+#z = x @ y

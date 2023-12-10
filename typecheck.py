@@ -149,7 +149,7 @@ def typecheck_function_call(expr, context):
     func = expr.func
     body = typecheck_expr(expr.func.value, context)
 
-    if func.attr == "stack" or "concatenate":
+    if (func.attr == "stack" or func.attr == "concatenate"):
         dtype, device = parse_keywords(expr)
         axis = None
         if(func.attr == "stack"): 
@@ -162,21 +162,29 @@ def typecheck_function_call(expr, context):
             if hasattr(arg, "elts"):
                 for elt in arg.elts:
                     t = typecheck_expr(elt, context)
-                    if func.attr == "concat":
+                    if func.attr == "stack":
                         if (size == []):
                             size = t.size
                         elif (t.size != size):
                             print("cannot stack tensors of differing sizes!")
                             return
-                    elif func.attr == "concatenate":
+                    else:
                         tsize = t.size
                         if axis == None:
                             tsize = [np.prod(tsize)] # Flatten 
-
-        if axis >= len(size) or axis < 0:
-            print("axis out of bounds")
-            return
-        new_size = size[0:axis] + [1] + size[axis:]
+                        else:
+                            # Sizes along everything besides axis match up!
+                            if (size == []):
+                                size = tsize
+                            if (size[0:axis] == tsize[0:axis] and size[axis+1:] == tsize[axis+1:]):
+                                size[axis] += tsize[axis]
+        if(func.attr == "stack"):
+            if axis != None and (axis >= len(size) or axis < 0):
+                print("axis out of bounds", axis)
+                return
+            new_size = size[0:axis] + [1] + size[axis:]
+        else:
+            new_size = size
         t = Tensor(size=new_size, type=import_aliases[expr.func.value.id], data_type=dtype, device=device)
         return t
 

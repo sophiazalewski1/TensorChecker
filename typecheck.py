@@ -149,7 +149,7 @@ def typecheck_function_call(expr, context):
     func = expr.func
     body = typecheck_expr(expr.func.value, context)
 
-    if (func.attr == "multiply"):
+    if (func.attr == "multiply" or func.attr == "mul"):
         t1 = typecheck_expr(expr.args[0], context)
         t2 = typecheck_expr(expr.args[1], context)
         return typecheck_mult(t1, t2)
@@ -159,10 +159,10 @@ def typecheck_function_call(expr, context):
         t2 = typecheck_expr(expr.args[1], context)
         return typecheck_add_sub(t1, t2)
     
-    elif (func.attr == "sqrt" or func.attr == "power"):
+    elif (func.attr == "square" or func.attr == "sqrt" or func.attr == "power" or func.attr == "pow"):
         return typecheck_expr(expr.args[0], context)
 
-    elif (func.attr == "stack" or func.attr == "concatenate" or func.attr == "cat"):
+    elif (func.attr == "stack" or func.attr == "concatenate" or func.attr == "cat" or func.attr == "exp"):
         dtype, device = parse_keywords(expr)
         axis = None
         if(func.attr == "stack"): 

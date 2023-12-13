@@ -142,7 +142,8 @@ def typecheck_expr(expr, context):
 ################################################################################
 ############################   FUNCTION CALLS   ################################
 ################################################################################
-
+def tile_dims(t_size, d_dim):
+    return [t*d.value for t,d in zip(t_size, d_dim)]
 
 def typecheck_function_call(expr, context):
 
@@ -229,14 +230,34 @@ def typecheck_function_call(expr, context):
     if func.attr == "arange":
         args = [arg.value for arg in expr.args]
         if len(args) == 1:
-            size = args[0]  # arange(stop)
+            size = [args[0]]  # arange(stop)
         elif len(args) == 2:
-            size = args[1] - args[0]  # arange(start, stop)
+            size = [args[1] - args[0]]  # arange(start, stop)
         elif len(args) == 3:
-            size = int((args[1] - args[0]) / args[2])  # arange(start, stop, step)
+            size = [int((args[1] - args[0]) / args[2])]  # arange(start, stop, step)
         dtype, device = parse_keywords(expr)
         t = Tensor(size=size, type="numpy", data_type=dtype, device=device)
         return t
+    
+    if func.attr == "tile":
+        t_type = typecheck_expr(expr.args[0], context)
+        reps = expr.args[1]
+        if isinstance(t_type, Tensor):
+            t_size = t_type.size
+            if hasattr(reps, "elts"):
+                d_dim = len(reps.elts)
+                # add additional 1 dims 
+                if d_dim > len(t_size):
+                    t_size = [1] * (d_dim - len(t_size)) + t_size
+                reps_size = []
+                for rep in reps.elts:
+                    reps_size.append(rep)
+                res_size = tile_dims(t_size, reps_size)
+                t = Tensor(size=res_size, type="numpy", data_type=t_type.data_type, device=t_type.device)
+                return t
+        else:
+            print("must be a tensor type")
+            return
 
 # Obtain the AST from the Python Script
 file_path = "python.py" if len(sys.argv) < 2 else sys.argv[1]

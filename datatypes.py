@@ -13,7 +13,7 @@ class Tensor(Type):
         self.type = type
         self.device = device
         self.data_type = data_type
-        if data_type == None:  # Not sure if these defaults are correct
+        if data_type == None:  
             if type == "numpy":
                 self.data_type = "float64"
             elif type == "torch":

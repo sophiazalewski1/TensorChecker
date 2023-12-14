@@ -3,7 +3,7 @@
         {
             "names": [
                 {
-                    "name": "torch",
+                    "name": "math",
                     "asname": null,
                     "node_type": "alias"
                 }
@@ -11,130 +11,250 @@
             "node_type": "Import"
         },
         {
-            "targets": [
+            "names": [
                 {
-                    "id": "data",
-                    "ctx": {
-                        "node_type": "Store"
-                    },
-                    "node_type": "Name"
+                    "name": "numpy",
+                    "asname": "np",
+                    "node_type": "alias"
                 }
             ],
-            "value": {
-                "elt": {
-                    "elts": [
-                        {
-                            "func": {
-                                "value": {
-                                    "id": "torch",
-                                    "ctx": {
-                                        "node_type": "Load"
-                                    },
-                                    "node_type": "Name"
-                                },
-                                "attr": "rand",
-                                "ctx": {
-                                    "node_type": "Load"
-                                },
-                                "node_type": "Attribute"
-                            },
-                            "args": [
-                                {
-                                    "value": 16,
-                                    "kind": null,
-                                    "node_type": "Constant"
-                                },
-                                {
-                                    "value": 3,
-                                    "kind": null,
-                                    "node_type": "Constant"
-                                },
-                                {
-                                    "value": 32,
-                                    "kind": null,
-                                    "node_type": "Constant"
-                                },
-                                {
-                                    "value": 32,
-                                    "kind": null,
-                                    "node_type": "Constant"
-                                }
-                            ],
-                            "keywords": [],
-                            "node_type": "Call"
-                        },
-                        {
-                            "func": {
-                                "value": {
-                                    "id": "torch",
-                                    "ctx": {
-                                        "node_type": "Load"
-                                    },
-                                    "node_type": "Name"
-                                },
-                                "attr": "rand",
-                                "ctx": {
-                                    "node_type": "Load"
-                                },
-                                "node_type": "Attribute"
-                            },
-                            "args": [
-                                {
-                                    "value": 1,
-                                    "kind": null,
-                                    "node_type": "Constant"
-                                }
-                            ],
-                            "keywords": [],
-                            "node_type": "Call"
-                        }
-                    ],
-                    "ctx": {
-                        "node_type": "Load"
-                    },
-                    "node_type": "Tuple"
-                },
-                "generators": [
+            "node_type": "Import"
+        },
+        {
+            "name": "sigmoid",
+            "args": {
+                "posonlyargs": [],
+                "args": [
                     {
-                        "target": {
-                            "id": "_",
+                        "arg": "z",
+                        "annotation": {
+                            "id": "float",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "type_comment": null,
+                        "node_type": "arg"
+                    }
+                ],
+                "vararg": null,
+                "kwonlyargs": [],
+                "kw_defaults": [],
+                "kwarg": null,
+                "defaults": [],
+                "node_type": "arguments"
+            },
+            "body": [
+                {
+                    "value": {
+                        "value": "A numerically stable implementation of sigmoid.",
+                        "kind": null,
+                        "node_type": "Constant"
+                    },
+                    "node_type": "Expr"
+                },
+                {
+                    "targets": [
+                        {
+                            "id": "x",
                             "ctx": {
                                 "node_type": "Store"
                             },
                             "node_type": "Name"
-                        },
-                        "iter": {
-                            "func": {
-                                "id": "range",
+                        }
+                    ],
+                    "value": {
+                        "func": {
+                            "value": {
+                                "id": "np",
                                 "ctx": {
                                     "node_type": "Load"
                                 },
                                 "node_type": "Name"
                             },
-                            "args": [
-                                {
-                                    "value": 100,
-                                    "kind": null,
-                                    "node_type": "Constant"
-                                }
-                            ],
-                            "keywords": [],
-                            "node_type": "Call"
+                            "attr": "logaddexp",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Attribute"
                         },
-                        "ifs": [],
-                        "is_async": 0,
-                        "node_type": "comprehension"
-                    }
-                ],
-                "node_type": "ListComp"
+                        "args": [
+                            {
+                                "value": 0,
+                                "kind": null,
+                                "node_type": "Constant"
+                            },
+                            {
+                                "op": {
+                                    "node_type": "USub"
+                                },
+                                "operand": {
+                                    "id": "z",
+                                    "ctx": {
+                                        "node_type": "Load"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "node_type": "UnaryOp"
+                            }
+                        ],
+                        "keywords": [],
+                        "node_type": "Call"
+                    },
+                    "type_comment": null,
+                    "node_type": "Assign"
+                },
+                {
+                    "value": {
+                        "func": {
+                            "value": {
+                                "id": "np",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "attr": "exp",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Attribute"
+                        },
+                        "args": [
+                            {
+                                "op": {
+                                    "node_type": "USub"
+                                },
+                                "operand": {
+                                    "id": "x",
+                                    "ctx": {
+                                        "node_type": "Load"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "node_type": "UnaryOp"
+                            }
+                        ],
+                        "keywords": [],
+                        "node_type": "Call"
+                    },
+                    "node_type": "Return"
+                }
+            ],
+            "decorator_list": [],
+            "returns": {
+                "id": "float",
+                "ctx": {
+                    "node_type": "Load"
+                },
+                "node_type": "Name"
             },
             "type_comment": null,
-            "node_type": "Assign"
+            "node_type": "FunctionDef"
+        },
+        {
+            "name": "grad",
+            "args": {
+                "posonlyargs": [],
+                "args": [
+                    {
+                        "arg": "y",
+                        "annotation": {
+                            "id": "float",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "type_comment": null,
+                        "node_type": "arg"
+                    },
+                    {
+                        "arg": "y_hat",
+                        "annotation": {
+                            "id": "float",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "type_comment": null,
+                        "node_type": "arg"
+                    },
+                    {
+                        "arg": "x_j",
+                        "annotation": {
+                            "id": "float",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "type_comment": null,
+                        "node_type": "arg"
+                    }
+                ],
+                "vararg": null,
+                "kwonlyargs": [],
+                "kw_defaults": [],
+                "kwarg": null,
+                "defaults": [],
+                "node_type": "arguments"
+            },
+            "body": [
+                {
+                    "value": {
+                        "left": {
+                            "left": {
+                                "id": "y_hat",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "op": {
+                                "node_type": "Sub"
+                            },
+                            "right": {
+                                "id": "y",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "node_type": "BinOp"
+                        },
+                        "op": {
+                            "node_type": "Mult"
+                        },
+                        "right": {
+                            "id": "x_j",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "node_type": "BinOp"
+                    },
+                    "node_type": "Return"
+                }
+            ],
+            "decorator_list": [],
+            "returns": {
+                "id": "float",
+                "ctx": {
+                    "node_type": "Load"
+                },
+                "node_type": "Name"
+            },
+            "type_comment": null,
+            "node_type": "FunctionDef"
         },
         {
             "targets": [
                 {
-                    "id": "W",
+                    "id": "x",
                     "ctx": {
                         "node_type": "Store"
                     },
@@ -144,13 +264,13 @@
             "value": {
                 "func": {
                     "value": {
-                        "id": "torch",
+                        "id": "np",
                         "ctx": {
                             "node_type": "Load"
                         },
                         "node_type": "Name"
                     },
-                    "attr": "rand",
+                    "attr": "array",
                     "ctx": {
                         "node_type": "Load"
                     },
@@ -158,14 +278,27 @@
                 },
                 "args": [
                     {
-                        "value": 31,
-                        "kind": null,
-                        "node_type": "Constant"
-                    },
-                    {
-                        "value": 32,
-                        "kind": null,
-                        "node_type": "Constant"
+                        "elts": [
+                            {
+                                "value": 1,
+                                "kind": null,
+                                "node_type": "Constant"
+                            },
+                            {
+                                "value": 3,
+                                "kind": null,
+                                "node_type": "Constant"
+                            },
+                            {
+                                "value": 2,
+                                "kind": null,
+                                "node_type": "Constant"
+                            }
+                        ],
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "List"
                     }
                 ],
                 "keywords": [],
@@ -177,7 +310,7 @@
         {
             "targets": [
                 {
-                    "id": "total",
+                    "id": "theta",
                     "ctx": {
                         "node_type": "Store"
                     },
@@ -187,13 +320,13 @@
             "value": {
                 "func": {
                     "value": {
-                        "id": "torch",
+                        "id": "np",
                         "ctx": {
                             "node_type": "Load"
                         },
                         "node_type": "Name"
                     },
-                    "attr": "zeros",
+                    "attr": "array",
                     "ctx": {
                         "node_type": "Load"
                     },
@@ -201,57 +334,150 @@
                 },
                 "args": [
                     {
-                        "value": 32,
-                        "kind": null,
-                        "node_type": "Constant"
-                    },
-                    {
-                        "value": 32,
-                        "kind": null,
-                        "node_type": "Constant"
+                        "elts": [
+                            {
+                                "value": 0,
+                                "kind": null,
+                                "node_type": "Constant"
+                            },
+                            {
+                                "value": 0,
+                                "kind": null,
+                                "node_type": "Constant"
+                            },
+                            {
+                                "value": 0,
+                                "kind": null,
+                                "node_type": "Constant"
+                            },
+                            {
+                                "value": 0,
+                                "kind": null,
+                                "node_type": "Constant"
+                            }
+                        ],
+                        "ctx": {
+                            "node_type": "Load"
+                        },
+                        "node_type": "List"
                     }
                 ],
                 "keywords": [],
                 "node_type": "Call"
+            },
+            "type_comment": null,
+            "node_type": "Assign"
+        },
+        {
+            "targets": [
+                {
+                    "id": "eta",
+                    "ctx": {
+                        "node_type": "Store"
+                    },
+                    "node_type": "Name"
+                }
+            ],
+            "value": {
+                "value": 0.1,
+                "kind": null,
+                "node_type": "Constant"
+            },
+            "type_comment": null,
+            "node_type": "Assign"
+        },
+        {
+            "targets": [
+                {
+                    "id": "y",
+                    "ctx": {
+                        "node_type": "Store"
+                    },
+                    "node_type": "Name"
+                }
+            ],
+            "value": {
+                "value": 1,
+                "kind": null,
+                "node_type": "Constant"
             },
             "type_comment": null,
             "node_type": "Assign"
         },
         {
             "target": {
-                "elts": [
-                    {
-                        "id": "inputs",
-                        "ctx": {
-                            "node_type": "Store"
-                        },
-                        "node_type": "Name"
-                    },
-                    {
-                        "id": "labels",
-                        "ctx": {
-                            "node_type": "Store"
-                        },
-                        "node_type": "Name"
-                    }
-                ],
+                "id": "iteration",
                 "ctx": {
                     "node_type": "Store"
                 },
-                "node_type": "Tuple"
+                "node_type": "Name"
             },
             "iter": {
-                "id": "data",
-                "ctx": {
-                    "node_type": "Load"
+                "func": {
+                    "id": "range",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Name"
                 },
-                "node_type": "Name"
+                "args": [
+                    {
+                        "value": 2,
+                        "kind": null,
+                        "node_type": "Constant"
+                    },
+                    {
+                        "value": 30,
+                        "kind": null,
+                        "node_type": "Constant"
+                    }
+                ],
+                "keywords": [],
+                "node_type": "Call"
             },
             "body": [
                 {
+                    "value": {
+                        "func": {
+                            "id": "print",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "args": [
+                            {
+                                "values": [
+                                    {
+                                        "value": "\nITERATION ",
+                                        "kind": null,
+                                        "node_type": "Constant"
+                                    },
+                                    {
+                                        "value": {
+                                            "id": "iteration",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "conversion": -1,
+                                        "format_spec": null,
+                                        "node_type": "FormattedValue"
+                                    }
+                                ],
+                                "node_type": "JoinedStr"
+                            }
+                        ],
+                        "keywords": [],
+                        "node_type": "Call"
+                    },
+                    "node_type": "Expr"
+                },
+                {
                     "targets": [
                         {
-                            "id": "x",
+                            "id": "gradient",
                             "ctx": {
                                 "node_type": "Store"
                             },
@@ -259,32 +485,292 @@
                         }
                     ],
                     "value": {
-                        "left": {
-                            "id": "W",
+                        "func": {
+                            "value": {
+                                "id": "np",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "attr": "array",
                             "ctx": {
                                 "node_type": "Load"
                             },
-                            "node_type": "Name"
+                            "node_type": "Attribute"
                         },
-                        "op": {
-                            "node_type": "MatMult"
-                        },
-                        "right": {
-                            "id": "inputs",
-                            "ctx": {
-                                "node_type": "Load"
+                        "args": [
+                            {
+                                "func": {
+                                    "id": "grad",
+                                    "ctx": {
+                                        "node_type": "Load"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "args": [
+                                    {
+                                        "id": "y",
+                                        "ctx": {
+                                            "node_type": "Load"
+                                        },
+                                        "node_type": "Name"
+                                    },
+                                    {
+                                        "func": {
+                                            "id": "sigmoid",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "args": [
+                                            {
+                                                "left": {
+                                                    "id": "theta",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "op": {
+                                                    "node_type": "MatMult"
+                                                },
+                                                "right": {
+                                                    "id": "x",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "node_type": "BinOp"
+                                            }
+                                        ],
+                                        "keywords": [],
+                                        "node_type": "Call"
+                                    },
+                                    {
+                                        "value": {
+                                            "id": "x",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "slice": {
+                                            "value": {
+                                                "value": 0,
+                                                "kind": null,
+                                                "node_type": "Constant"
+                                            },
+                                            "node_type": "Index"
+                                        },
+                                        "ctx": {
+                                            "node_type": "Load"
+                                        },
+                                        "node_type": "Subscript"
+                                    }
+                                ],
+                                "keywords": [],
+                                "node_type": "Call"
                             },
-                            "node_type": "Name"
-                        },
-                        "node_type": "BinOp"
+                            {
+                                "func": {
+                                    "id": "grad",
+                                    "ctx": {
+                                        "node_type": "Load"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "args": [
+                                    {
+                                        "id": "y",
+                                        "ctx": {
+                                            "node_type": "Load"
+                                        },
+                                        "node_type": "Name"
+                                    },
+                                    {
+                                        "func": {
+                                            "id": "sigmoid",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "args": [
+                                            {
+                                                "left": {
+                                                    "id": "theta",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "op": {
+                                                    "node_type": "MatMult"
+                                                },
+                                                "right": {
+                                                    "id": "x",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "node_type": "BinOp"
+                                            }
+                                        ],
+                                        "keywords": [],
+                                        "node_type": "Call"
+                                    },
+                                    {
+                                        "value": {
+                                            "id": "x",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "slice": {
+                                            "value": {
+                                                "value": 1,
+                                                "kind": null,
+                                                "node_type": "Constant"
+                                            },
+                                            "node_type": "Index"
+                                        },
+                                        "ctx": {
+                                            "node_type": "Load"
+                                        },
+                                        "node_type": "Subscript"
+                                    }
+                                ],
+                                "keywords": [],
+                                "node_type": "Call"
+                            },
+                            {
+                                "func": {
+                                    "id": "grad",
+                                    "ctx": {
+                                        "node_type": "Load"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "args": [
+                                    {
+                                        "id": "y",
+                                        "ctx": {
+                                            "node_type": "Load"
+                                        },
+                                        "node_type": "Name"
+                                    },
+                                    {
+                                        "func": {
+                                            "id": "sigmoid",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "args": [
+                                            {
+                                                "left": {
+                                                    "id": "theta",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "op": {
+                                                    "node_type": "MatMult"
+                                                },
+                                                "right": {
+                                                    "id": "x",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "node_type": "BinOp"
+                                            }
+                                        ],
+                                        "keywords": [],
+                                        "node_type": "Call"
+                                    },
+                                    {
+                                        "value": {
+                                            "id": "x",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "slice": {
+                                            "value": {
+                                                "value": 2,
+                                                "kind": null,
+                                                "node_type": "Constant"
+                                            },
+                                            "node_type": "Index"
+                                        },
+                                        "ctx": {
+                                            "node_type": "Load"
+                                        },
+                                        "node_type": "Subscript"
+                                    }
+                                ],
+                                "keywords": [],
+                                "node_type": "Call"
+                            }
+                        ],
+                        "keywords": [],
+                        "node_type": "Call"
                     },
                     "type_comment": null,
                     "node_type": "Assign"
                 },
                 {
+                    "value": {
+                        "func": {
+                            "id": "print",
+                            "ctx": {
+                                "node_type": "Load"
+                            },
+                            "node_type": "Name"
+                        },
+                        "args": [
+                            {
+                                "values": [
+                                    {
+                                        "value": "gradient = ",
+                                        "kind": null,
+                                        "node_type": "Constant"
+                                    },
+                                    {
+                                        "value": {
+                                            "id": "gradient",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "conversion": -1,
+                                        "format_spec": null,
+                                        "node_type": "FormattedValue"
+                                    }
+                                ],
+                                "node_type": "JoinedStr"
+                            }
+                        ],
+                        "keywords": [],
+                        "node_type": "Call"
+                    },
+                    "node_type": "Expr"
+                },
+                {
                     "targets": [
                         {
-                            "id": "x",
+                            "id": "theta",
                             "ctx": {
                                 "node_type": "Store"
                             },
@@ -292,60 +778,92 @@
                         }
                     ],
                     "value": {
-                        "left": {
-                            "id": "inputs",
+                        "func": {
+                            "value": {
+                                "id": "np",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            },
+                            "attr": "subtract",
                             "ctx": {
                                 "node_type": "Load"
                             },
-                            "node_type": "Name"
+                            "node_type": "Attribute"
                         },
-                        "op": {
-                            "node_type": "Sub"
-                        },
-                        "right": {
-                            "id": "labels",
-                            "ctx": {
-                                "node_type": "Load"
+                        "args": [
+                            {
+                                "left": {
+                                    "id": "eta",
+                                    "ctx": {
+                                        "node_type": "Load"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "op": {
+                                    "node_type": "Mult"
+                                },
+                                "right": {
+                                    "id": "gradient",
+                                    "ctx": {
+                                        "node_type": "Load"
+                                    },
+                                    "node_type": "Name"
+                                },
+                                "node_type": "BinOp"
                             },
-                            "node_type": "Name"
-                        },
-                        "node_type": "BinOp"
+                            {
+                                "id": "theta",
+                                "ctx": {
+                                    "node_type": "Load"
+                                },
+                                "node_type": "Name"
+                            }
+                        ],
+                        "keywords": [],
+                        "node_type": "Call"
                     },
                     "type_comment": null,
                     "node_type": "Assign"
                 },
                 {
-                    "targets": [
-                        {
-                            "id": "total",
-                            "ctx": {
-                                "node_type": "Store"
-                            },
-                            "node_type": "Name"
-                        }
-                    ],
                     "value": {
-                        "left": {
-                            "id": "total",
+                        "func": {
+                            "id": "print",
                             "ctx": {
                                 "node_type": "Load"
                             },
                             "node_type": "Name"
                         },
-                        "op": {
-                            "node_type": "Add"
-                        },
-                        "right": {
-                            "id": "x",
-                            "ctx": {
-                                "node_type": "Load"
-                            },
-                            "node_type": "Name"
-                        },
-                        "node_type": "BinOp"
+                        "args": [
+                            {
+                                "values": [
+                                    {
+                                        "value": "theta = ",
+                                        "kind": null,
+                                        "node_type": "Constant"
+                                    },
+                                    {
+                                        "value": {
+                                            "id": "theta",
+                                            "ctx": {
+                                                "node_type": "Load"
+                                            },
+                                            "node_type": "Name"
+                                        },
+                                        "conversion": -1,
+                                        "format_spec": null,
+                                        "node_type": "FormattedValue"
+                                    }
+                                ],
+                                "node_type": "JoinedStr"
+                            }
+                        ],
+                        "keywords": [],
+                        "node_type": "Call"
                     },
-                    "type_comment": null,
-                    "node_type": "Assign"
+                    "node_type": "Expr"
                 }
             ],
             "orelse": [],

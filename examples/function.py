@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 
 def multiply2(A, B):

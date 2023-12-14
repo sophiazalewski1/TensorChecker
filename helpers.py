@@ -20,6 +20,7 @@ def obtain_manual_size(args):
         if hasattr(arg, "elts"):
             return helper(arg.elts)
 
+
 # Obtains tensor info (dtype and device) from function call args
 def parse_keywords(expr):
     data_type = None
@@ -38,11 +39,13 @@ def parse_keywords(expr):
 ################# TYPE (Torch vs. Numpy) + DEVICE CHECKING #####################
 
 # Checks if tensors are on the same device and have same dtype
-def tensors_compatable(tensor1 : Type, tensor2 : Type) -> bool:
+def tensors_compatable(tensor1: Type, tensor2: Type) -> bool:
 
     # Any operation between non-tensors is compatable by default
-    if not isinstance(tensor1, Tensor): return True  
-    if not isinstance(tensor2, Tensor): return True 
+    if not isinstance(tensor1, Tensor):
+        return True
+    if not isinstance(tensor2, Tensor):
+        return True
     if tensor1.type != tensor2.type:
         print("Types of tensors do not match!")
         return False
@@ -51,13 +54,14 @@ def tensors_compatable(tensor1 : Type, tensor2 : Type) -> bool:
         return False
     return True
 
+
 ############################### SIZE CHECKING ##################################
 
 # implements rules defined in matmul.py
-def check_size_matmul(size1 : size, size2 : size) -> bool:
+def check_size_matmul(size1: size, size2: size, lineno) -> bool:
     # inner sizes match
     if size1[-1] != size2[-2]:
-        print("Matmul: dimensions mismatch")
+        print("Matmul: dimensions mismatch", lineno)
         return
     res_dims = [size1[-2], size2[-1]]
     size1 = size1[:-2]
@@ -79,14 +83,20 @@ def check_size_matmul(size1 : size, size2 : size) -> bool:
             batch_dims.append(n1)
         else:
             # TODO make this message better by getting index of dims that are mismatching
-            print("Matmul: cannot broadcast nonsingleton dimension")
+            print("Matmul: cannot broadcast nonsingleton dimension", lineno)
             return
     res_dims = batch_dims + res_dims
     return res_dims
 
+
+def tile_dims(t_size, d_dim):
+    return [t * d.value for t, d in zip(t_size, d_dim)]
+
+
 ################################ FUNCTION CALLS ################################
 
-def typecheck_add_sub(left : Type, right : Type) -> Type:
+
+def typecheck_add_sub(left: Type, right: Type, lineno) -> Type:
     # Adding tensors of same exact size
     if (
         isinstance(left, Tensor)
@@ -107,11 +117,12 @@ def typecheck_add_sub(left : Type, right : Type) -> Type:
 
     # ADD OTHER CASES
     else:
-        print("Mismatch!")
+        print("Mismatch in subtraction dimensions!", lineno)
         return
-                
+
+
 # Elementwise multiplication check
-def typecheck_mult(left : Type, right : Type) -> Type:
+def typecheck_mult(left: Type, right: Type, lineno: int) -> Type:
     # Mult tensor of compatible sizes (nxm) x (mxn)
     if (
         isinstance(left, Tensor)
@@ -131,12 +142,15 @@ def typecheck_mult(left : Type, right : Type) -> Type:
         return right
 
     # ADD OTHER CASES
+    elif isinstance(left, Tensor) and isinstance(right, Tensor):
+        pass
     else:
-        print("Mismatch!")
+        print("Type mismatch in multiply expected tensor!", lineno)
         return
-                
+
+
 # Matrix wise multiplication check
-def typecheck_matmul(left : Type, right : Type) -> Type:
+def typecheck_matmul(left: Type, right: Type, lineno: int) -> Type:
     # Both tensors
     if isinstance(left, Tensor) and isinstance(right, Tensor):
 
@@ -154,7 +168,7 @@ def typecheck_matmul(left : Type, right : Type) -> Type:
             dims_right = right.size + [1]
             remove_right = True
             print(dims_right)
-        res_dim = check_size_matmul(dims_left, dims_right)
+        res_dim = check_size_matmul(dims_left, dims_right, lineno)
 
         if res_dim is None:
             return
@@ -167,15 +181,18 @@ def typecheck_matmul(left : Type, right : Type) -> Type:
         t_type = Tensor(res_dim, left.type, left.data_type, left.device)
         return t_type
     else:
-        print(f"both left and right side of matrix mul have to be tensor types... found {type(left)}, {type(right)}")
+        print(
+            f"both left and right side of matrix mul have to be tensor types... found types {type(left)} and {type(right)} on line number",
+            lineno,
+        )
         return
 
 
 ## control flow
 def get_types_iter(target, dataloader, context):
-    dl_types = dataloader.get_tensor_type()
+    dl_types = dataloader.tensor_ts
     if isinstance(target, ast.Tuple):
-        for elem,t_type in zip(target.elts, dl_types):
+        for elem, t_type in zip(target.elts, dl_types):
             if isinstance(elem, ast.Name) and isinstance(t_type, Tensor):
                 context[elem.id] = t_type
     elif isinstance(target, ast.Name) and isinstance(dl_types[0], Tensor):

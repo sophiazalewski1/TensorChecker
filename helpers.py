@@ -1,4 +1,5 @@
 from datatypes import *
+import ast
 
 ############################# PARSING AST INFO #################################
 
@@ -136,7 +137,6 @@ def typecheck_mult(left : Type, right : Type) -> Type:
                 
 # Matrix wise multiplication check
 def typecheck_matmul(left : Type, right : Type) -> Type:
-
     # Both tensors
     if isinstance(left, Tensor) and isinstance(right, Tensor):
 
@@ -167,6 +167,17 @@ def typecheck_matmul(left : Type, right : Type) -> Type:
         t_type = Tensor(res_dim, left.type, left.data_type, left.device)
         return t_type
     else:
-        print("both left and right side of matrix mul have to be tensor types")
+        print(f"both left and right side of matrix mul have to be tensor types... found {type(left)}, {type(right)}")
         return
+
+
+## control flow
+def get_types_iter(target, dataloader, context):
+    dl_types = dataloader.get_tensor_type()
+    if isinstance(target, ast.Tuple):
+        for elem,t_type in zip(target.elts, dl_types):
+            if isinstance(elem, ast.Name) and isinstance(t_type, Tensor):
+                context[elem.id] = t_type
+    elif isinstance(target, ast.Name) and isinstance(dl_types[0], Tensor):
+        context[target.id] = dl_types[0]
 

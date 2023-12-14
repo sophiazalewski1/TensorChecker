@@ -4,6 +4,7 @@ import sys
 from datatypes import *
 from helpers import *
 import numpy as np
+import copy
 
 import_aliases = {} # maps imports to their user-defined aliases, 
                      # ex. import numpy as np -> name : numpy, alias : np
@@ -12,11 +13,11 @@ import_aliases = {} # maps imports to their user-defined aliases,
 ############################   STATMENT LISTS   ################################
 ################################################################################
 
-def parse_stmt_list(stmts, context):
+# take in possible contexts and modify
+def parse_stmt_list(stmts, contexts : List[Context]) -> List[Context] :
 
-    possible_contexts = [context]
+    # possible_contexts = [context]
     for elt in stmts:
-
         ###################### PARSE IMPORTS #####################
         """build up a dictionary of (import_name : alias) values so that
         when we see a function call, we can identify if it is a builtin
@@ -51,15 +52,14 @@ def parse_stmt_list(stmts, context):
 
         # Assign!
         elif isinstance(elt, ast.Assign):
-
+            # print("entering assign")
             # We are assigning variables to a tensor,
             # add them to the context
-
-            t = typecheck_expr(elt.value, context)
-            if isinstance(t, Tensor):
-                for targ in elt.targets:
-                    context[targ.id] = t
-                    print(context)
+            for context in contexts:
+                t = typecheck_expr(elt.value, context)
+                if isinstance(t, Tensor) or isinstance(t, Dataloader):
+                    for targ in elt.targets:
+                        context[targ.id] = t
 
         # Expression
         elif isinstance(elt, ast.Expr):
@@ -68,14 +68,33 @@ def parse_stmt_list(stmts, context):
         
         # If statement
         elif isinstance(elt, ast.If):
+            # typecheck the test
+            for context in contexts:
+                # this should probably raise an exception or something
+                test = typecheck_expr(elt.test, context)
             # Typecheck the body
-            context1 = parse_stmt_list(context.copy()) # Deep copy?
-
+            contexts1 = parse_stmt_list(elt.body, copy.deepcopy(contexts)) # Deep copy?
             # Typecheck the else
-            context2 = parse_stmt_list(context.copy())
-
+            contexts2 = parse_stmt_list(elt.orelse, copy.deepcopy(contexts))
+            contexts = contexts1 + contexts2
+        
+        elif isinstance(elt, ast.For):
+            if isinstance(elt.iter, ast.Name):
+                for context in contexts:
+                    iterable = context[elt.iter.id]
+                    if isinstance(iterable, Dataloader):
+                        get_types_iter(elt.target, iterable, context)
+                    else:
+                        print("not a dataloader, skipping")
+                        continue
+            else:
+                #TODO implement ranges, other generators, etc
+                print("unrecognized loop type, skipping")
+                continue 
+            contexts = parse_stmt_list(elt.body, contexts)
         else:
             print("other")
+    return contexts
 
 ################################################################################
 ##############################   EXPRESSIONS   #################################
@@ -134,7 +153,23 @@ def typecheck_expr(expr, context):
                 if name in import_aliases:
                     return Function(import_aliases[name])
         return Function(name)
+    
+    elif isinstance(expr, ast.ListComp):
+        # if the expression inside the list comp is a static tensor, create dataloader for it.
+        elem_type = typecheck_expr(expr.elt, context)
+        # print(elem_type)
+        if isinstance(elem_type, Tensor):
+            return Dataloader([elem_type])
+        elif isinstance(elem_type, list):
+            return Dataloader(elem_type)
 
+    elif isinstance(expr, ast.Tuple):
+        tuple_types = []
+        for elt in expr.elts:
+            elem_type = typecheck_expr(elt, context)
+            tuple_types.append(elem_type)
+        return tuple_types
+    
     else:
         print("expr not call", expr, expr.lineno)
 
@@ -271,12 +306,18 @@ def typecheck_function_call(expr, context):
         else:
             print("must be a tensor type")
             return
+    
+    # get type for MNIST dataloader
+    elif func.attr == "MNIST":
+        return MNIST_DATALOADER
 
 # Obtain the AST from the Python Script
-file_path = "python.py" if len(sys.argv) < 2 else sys.argv[1]
+file_path = "examples/python.py" if len(sys.argv) < 2 else sys.argv[1]
 with open(file_path, "r") as file:
     file_content = file.read()
 ast_ = ast.parse(file_content)
 
 # Parse!
-parse_stmt_list(ast_.body, Context())
+contexts = parse_stmt_list(ast_.body, [Context()])
+for context in contexts:
+    print("the context is ", context)

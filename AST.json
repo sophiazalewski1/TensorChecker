@@ -405,6 +405,29 @@
             "node_type": "Assign"
         },
         {
+            "value": {
+                "left": {
+                    "id": "theta",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Name"
+                },
+                "op": {
+                    "node_type": "MatMult"
+                },
+                "right": {
+                    "id": "x",
+                    "ctx": {
+                        "node_type": "Load"
+                    },
+                    "node_type": "Name"
+                },
+                "node_type": "BinOp"
+            },
+            "node_type": "Expr"
+        },
+        {
             "target": {
                 "id": "iteration",
                 "ctx": {
@@ -501,226 +524,472 @@
                         },
                         "args": [
                             {
-                                "func": {
-                                    "id": "grad",
-                                    "ctx": {
-                                        "node_type": "Load"
-                                    },
-                                    "node_type": "Name"
-                                },
-                                "args": [
+                                "elts": [
                                     {
-                                        "id": "y",
-                                        "ctx": {
-                                            "node_type": "Load"
-                                        },
-                                        "node_type": "Name"
-                                    },
-                                    {
-                                        "func": {
-                                            "id": "sigmoid",
-                                            "ctx": {
-                                                "node_type": "Load"
-                                            },
-                                            "node_type": "Name"
-                                        },
-                                        "args": [
+                                        "elts": [
                                             {
-                                                "left": {
-                                                    "id": "theta",
+                                                "func": {
+                                                    "id": "grad",
                                                     "ctx": {
                                                         "node_type": "Load"
                                                     },
                                                     "node_type": "Name"
                                                 },
-                                                "op": {
-                                                    "node_type": "MatMult"
-                                                },
-                                                "right": {
-                                                    "id": "x",
+                                                "args": [
+                                                    {
+                                                        "id": "y",
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Name"
+                                                    },
+                                                    {
+                                                        "func": {
+                                                            "id": "sigmoid",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "args": [
+                                                            {
+                                                                "left": {
+                                                                    "id": "theta",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "op": {
+                                                                    "node_type": "MatMult"
+                                                                },
+                                                                "right": {
+                                                                    "id": "x",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "node_type": "BinOp"
+                                                            }
+                                                        ],
+                                                        "keywords": [],
+                                                        "node_type": "Call"
+                                                    },
+                                                    {
+                                                        "value": {
+                                                            "id": "x",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "slice": {
+                                                            "value": {
+                                                                "value": 0,
+                                                                "kind": null,
+                                                                "node_type": "Constant"
+                                                            },
+                                                            "node_type": "Index"
+                                                        },
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Subscript"
+                                                    }
+                                                ],
+                                                "keywords": [],
+                                                "node_type": "Call"
+                                            },
+                                            {
+                                                "func": {
+                                                    "id": "grad",
                                                     "ctx": {
                                                         "node_type": "Load"
                                                     },
                                                     "node_type": "Name"
                                                 },
-                                                "node_type": "BinOp"
+                                                "args": [
+                                                    {
+                                                        "id": "y",
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Name"
+                                                    },
+                                                    {
+                                                        "func": {
+                                                            "id": "sigmoid",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "args": [
+                                                            {
+                                                                "left": {
+                                                                    "id": "theta",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "op": {
+                                                                    "node_type": "MatMult"
+                                                                },
+                                                                "right": {
+                                                                    "id": "x",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "node_type": "BinOp"
+                                                            }
+                                                        ],
+                                                        "keywords": [],
+                                                        "node_type": "Call"
+                                                    },
+                                                    {
+                                                        "value": {
+                                                            "id": "x",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "slice": {
+                                                            "value": {
+                                                                "value": 1,
+                                                                "kind": null,
+                                                                "node_type": "Constant"
+                                                            },
+                                                            "node_type": "Index"
+                                                        },
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Subscript"
+                                                    }
+                                                ],
+                                                "keywords": [],
+                                                "node_type": "Call"
+                                            },
+                                            {
+                                                "func": {
+                                                    "id": "grad",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "args": [
+                                                    {
+                                                        "id": "y",
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Name"
+                                                    },
+                                                    {
+                                                        "func": {
+                                                            "id": "sigmoid",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "args": [
+                                                            {
+                                                                "left": {
+                                                                    "id": "theta",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "op": {
+                                                                    "node_type": "MatMult"
+                                                                },
+                                                                "right": {
+                                                                    "id": "x",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "node_type": "BinOp"
+                                                            }
+                                                        ],
+                                                        "keywords": [],
+                                                        "node_type": "Call"
+                                                    },
+                                                    {
+                                                        "value": {
+                                                            "id": "x",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "slice": {
+                                                            "value": {
+                                                                "value": 2,
+                                                                "kind": null,
+                                                                "node_type": "Constant"
+                                                            },
+                                                            "node_type": "Index"
+                                                        },
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Subscript"
+                                                    }
+                                                ],
+                                                "keywords": [],
+                                                "node_type": "Call"
                                             }
                                         ],
-                                        "keywords": [],
-                                        "node_type": "Call"
-                                    },
-                                    {
-                                        "value": {
-                                            "id": "x",
-                                            "ctx": {
-                                                "node_type": "Load"
-                                            },
-                                            "node_type": "Name"
-                                        },
-                                        "slice": {
-                                            "value": {
-                                                "value": 0,
-                                                "kind": null,
-                                                "node_type": "Constant"
-                                            },
-                                            "node_type": "Index"
-                                        },
                                         "ctx": {
                                             "node_type": "Load"
                                         },
-                                        "node_type": "Subscript"
-                                    }
-                                ],
-                                "keywords": [],
-                                "node_type": "Call"
-                            },
-                            {
-                                "func": {
-                                    "id": "grad",
-                                    "ctx": {
-                                        "node_type": "Load"
-                                    },
-                                    "node_type": "Name"
-                                },
-                                "args": [
-                                    {
-                                        "id": "y",
-                                        "ctx": {
-                                            "node_type": "Load"
-                                        },
-                                        "node_type": "Name"
+                                        "node_type": "List"
                                     },
                                     {
-                                        "func": {
-                                            "id": "sigmoid",
-                                            "ctx": {
-                                                "node_type": "Load"
-                                            },
-                                            "node_type": "Name"
-                                        },
-                                        "args": [
+                                        "elts": [
                                             {
-                                                "left": {
-                                                    "id": "theta",
+                                                "func": {
+                                                    "id": "grad",
                                                     "ctx": {
                                                         "node_type": "Load"
                                                     },
                                                     "node_type": "Name"
                                                 },
-                                                "op": {
-                                                    "node_type": "MatMult"
-                                                },
-                                                "right": {
-                                                    "id": "x",
+                                                "args": [
+                                                    {
+                                                        "id": "y",
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Name"
+                                                    },
+                                                    {
+                                                        "func": {
+                                                            "id": "sigmoid",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "args": [
+                                                            {
+                                                                "left": {
+                                                                    "id": "theta",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "op": {
+                                                                    "node_type": "MatMult"
+                                                                },
+                                                                "right": {
+                                                                    "id": "x",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "node_type": "BinOp"
+                                                            }
+                                                        ],
+                                                        "keywords": [],
+                                                        "node_type": "Call"
+                                                    },
+                                                    {
+                                                        "value": {
+                                                            "id": "x",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "slice": {
+                                                            "value": {
+                                                                "value": 0,
+                                                                "kind": null,
+                                                                "node_type": "Constant"
+                                                            },
+                                                            "node_type": "Index"
+                                                        },
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Subscript"
+                                                    }
+                                                ],
+                                                "keywords": [],
+                                                "node_type": "Call"
+                                            },
+                                            {
+                                                "func": {
+                                                    "id": "grad",
                                                     "ctx": {
                                                         "node_type": "Load"
                                                     },
                                                     "node_type": "Name"
                                                 },
-                                                "node_type": "BinOp"
+                                                "args": [
+                                                    {
+                                                        "id": "y",
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Name"
+                                                    },
+                                                    {
+                                                        "func": {
+                                                            "id": "sigmoid",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "args": [
+                                                            {
+                                                                "left": {
+                                                                    "id": "theta",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "op": {
+                                                                    "node_type": "MatMult"
+                                                                },
+                                                                "right": {
+                                                                    "id": "x",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "node_type": "BinOp"
+                                                            }
+                                                        ],
+                                                        "keywords": [],
+                                                        "node_type": "Call"
+                                                    },
+                                                    {
+                                                        "value": {
+                                                            "id": "x",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "slice": {
+                                                            "value": {
+                                                                "value": 1,
+                                                                "kind": null,
+                                                                "node_type": "Constant"
+                                                            },
+                                                            "node_type": "Index"
+                                                        },
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Subscript"
+                                                    }
+                                                ],
+                                                "keywords": [],
+                                                "node_type": "Call"
+                                            },
+                                            {
+                                                "func": {
+                                                    "id": "grad",
+                                                    "ctx": {
+                                                        "node_type": "Load"
+                                                    },
+                                                    "node_type": "Name"
+                                                },
+                                                "args": [
+                                                    {
+                                                        "id": "y",
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Name"
+                                                    },
+                                                    {
+                                                        "func": {
+                                                            "id": "sigmoid",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "args": [
+                                                            {
+                                                                "left": {
+                                                                    "id": "theta",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "op": {
+                                                                    "node_type": "MatMult"
+                                                                },
+                                                                "right": {
+                                                                    "id": "x",
+                                                                    "ctx": {
+                                                                        "node_type": "Load"
+                                                                    },
+                                                                    "node_type": "Name"
+                                                                },
+                                                                "node_type": "BinOp"
+                                                            }
+                                                        ],
+                                                        "keywords": [],
+                                                        "node_type": "Call"
+                                                    },
+                                                    {
+                                                        "value": {
+                                                            "id": "x",
+                                                            "ctx": {
+                                                                "node_type": "Load"
+                                                            },
+                                                            "node_type": "Name"
+                                                        },
+                                                        "slice": {
+                                                            "value": {
+                                                                "value": 2,
+                                                                "kind": null,
+                                                                "node_type": "Constant"
+                                                            },
+                                                            "node_type": "Index"
+                                                        },
+                                                        "ctx": {
+                                                            "node_type": "Load"
+                                                        },
+                                                        "node_type": "Subscript"
+                                                    }
+                                                ],
+                                                "keywords": [],
+                                                "node_type": "Call"
                                             }
                                         ],
-                                        "keywords": [],
-                                        "node_type": "Call"
-                                    },
-                                    {
-                                        "value": {
-                                            "id": "x",
-                                            "ctx": {
-                                                "node_type": "Load"
-                                            },
-                                            "node_type": "Name"
-                                        },
-                                        "slice": {
-                                            "value": {
-                                                "value": 1,
-                                                "kind": null,
-                                                "node_type": "Constant"
-                                            },
-                                            "node_type": "Index"
-                                        },
                                         "ctx": {
                                             "node_type": "Load"
                                         },
-                                        "node_type": "Subscript"
+                                        "node_type": "List"
                                     }
                                 ],
-                                "keywords": [],
-                                "node_type": "Call"
-                            },
-                            {
-                                "func": {
-                                    "id": "grad",
-                                    "ctx": {
-                                        "node_type": "Load"
-                                    },
-                                    "node_type": "Name"
+                                "ctx": {
+                                    "node_type": "Load"
                                 },
-                                "args": [
-                                    {
-                                        "id": "y",
-                                        "ctx": {
-                                            "node_type": "Load"
-                                        },
-                                        "node_type": "Name"
-                                    },
-                                    {
-                                        "func": {
-                                            "id": "sigmoid",
-                                            "ctx": {
-                                                "node_type": "Load"
-                                            },
-                                            "node_type": "Name"
-                                        },
-                                        "args": [
-                                            {
-                                                "left": {
-                                                    "id": "theta",
-                                                    "ctx": {
-                                                        "node_type": "Load"
-                                                    },
-                                                    "node_type": "Name"
-                                                },
-                                                "op": {
-                                                    "node_type": "MatMult"
-                                                },
-                                                "right": {
-                                                    "id": "x",
-                                                    "ctx": {
-                                                        "node_type": "Load"
-                                                    },
-                                                    "node_type": "Name"
-                                                },
-                                                "node_type": "BinOp"
-                                            }
-                                        ],
-                                        "keywords": [],
-                                        "node_type": "Call"
-                                    },
-                                    {
-                                        "value": {
-                                            "id": "x",
-                                            "ctx": {
-                                                "node_type": "Load"
-                                            },
-                                            "node_type": "Name"
-                                        },
-                                        "slice": {
-                                            "value": {
-                                                "value": 2,
-                                                "kind": null,
-                                                "node_type": "Constant"
-                                            },
-                                            "node_type": "Index"
-                                        },
-                                        "ctx": {
-                                            "node_type": "Load"
-                                        },
-                                        "node_type": "Subscript"
-                                    }
-                                ],
-                                "keywords": [],
-                                "node_type": "Call"
+                                "node_type": "List"
                             }
                         ],
                         "keywords": [],

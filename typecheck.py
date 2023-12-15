@@ -9,6 +9,34 @@ import copy
 import_aliases = {}  # maps imports to their user-defined aliases,
 # ex. import numpy as np -> name : numpy, alias : np
 
+
+def obtain_manual_size(args, context, lineno):
+    def helper(args):
+        num_elts = len(args)
+        done = False
+
+        sub_res = []
+        for arg in args:
+            if hasattr(arg, "elts"):
+                res = helper(arg.elts)
+                if sub_res == []:
+                    sub_res = res
+                # Check that all sides of the elt are symmetrical
+                if sub_res != res:
+                    print("Array: Tensors have to be the same size", lineno)
+                    return
+
+        if sub_res == []:
+            for arg in args:
+                typecheck_expr(args, context)
+
+        return [num_elts] + sub_res
+
+    for arg in args:
+        if hasattr(arg, "elts"):
+            return helper(arg.elts)
+
+
 ################################################################################
 ############################   STATMENT LISTS   ################################
 ################################################################################
@@ -188,8 +216,11 @@ def typecheck_expr(expr, context):
         return tuple_types
 
     # other cases
+    # elif isinstance(expr, ast.Constant):
+    #     return Tensor([1], "Any", None, None)
     else:
-        return context
+        # print(expr)
+        return None
 
 
 ################################################################################
@@ -355,12 +386,17 @@ def typecheck_function_call(expr, context):
 
         # Handles torch.tensor calls
         elif func.attr == "tensor" or func.attr == "array":
-            size = obtain_manual_size(expr.args)
+            size = obtain_manual_size(expr.args, context, expr.lineno)
             dtype, device = parse_keywords(expr)
+            # print(dtype)
             if func.attr == "tensor":
                 t_t = "torch"
+                if dtype == None:
+                    dtype = "float32"
             else:
-                t_t = "array"
+                t_t = "numpy"
+                if dtype == None:
+                    dtype = "float64"
             t = Tensor(size=size, type=t_t, data_type=dtype, device=device)
             return t
 
@@ -413,7 +449,7 @@ ast_ = ast.parse(file_content)
 
 # Parse!
 contexts = parse_stmt_list(ast_.body, [Context()])
-for context in contexts:
-    print("the context is ")
-    print(context)
+# for context in contexts:
+#     print("the context is ")
+#     print(context)
 

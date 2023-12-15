@@ -5,20 +5,6 @@ import ast
 
 # Obtains the size from function calls with explit tensor value declarations
 # ex. torch.tensor([[-1,-1],[2,4]])
-def obtain_manual_size(args):
-    def helper(elts):
-        num_elts = len(elts)
-        for arg in elts:
-            if hasattr(arg, "elts"):
-                res = helper(arg.elts)
-                res.append(num_elts)
-                return res
-        return [num_elts]
-
-    for arg in args:
-        if hasattr(arg, "elts"):
-            return helper(arg.elts)
-
 
 # Obtains tensor info (dtype and device) from function call args
 def parse_keywords(expr):

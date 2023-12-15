@@ -7,7 +7,6 @@ import ast
 # ex. torch.tensor([[-1,-1],[2,4]])
 def obtain_manual_size(args):
     def helper(elts):
-        size = []
         num_elts = len(elts)
         for arg in elts:
             if hasattr(arg, "elts"):
@@ -39,7 +38,7 @@ def parse_keywords(expr):
 ################# TYPE (Torch vs. Numpy) + DEVICE CHECKING #####################
 
 # Checks if tensors are on the same device and have same dtype
-def tensors_compatable(tensor1: Type, tensor2: Type) -> bool:
+def tensors_compatable(tensor1: Type, tensor2: Type, lineno) -> bool:
 
     # Any operation between non-tensors is compatable by default
     if not isinstance(tensor1, Tensor):
@@ -47,10 +46,22 @@ def tensors_compatable(tensor1: Type, tensor2: Type) -> bool:
     if not isinstance(tensor2, Tensor):
         return True
     if tensor1.type != tensor2.type:
-        print("Types of tensors do not match!")
+        print(
+            f"Types of tensors do not match! Found types {tensor1.type} and {tensor2.type} on line",
+            lineno,
+        )
         return False
     if tensor1.device != tensor2.device:
-        print("Devices of tensors do not match!")
+        print(
+            f"Devices of tensors do not match! Found types {tensor1.device} and {tensor2.device}",
+            lineno,
+        )
+        return False
+    if tensor1.data_type != tensor2.data_type:
+        print(
+            f"Devices of tensors do not match! Found types {tensor1.data_type} and {tensor2.data_type}",
+            lineno,
+        )
         return False
     return True
 
@@ -60,8 +71,14 @@ def tensors_compatable(tensor1: Type, tensor2: Type) -> bool:
 # implements rules defined in matmul.py
 def check_size_matmul(size1: size, size2: size, lineno) -> bool:
     # inner sizes match
+    lsize = size1.copy()
+    rsize = size2.copy()
+
     if size1[-1] != size2[-2]:
-        print("Matmul: dimensions mismatch", lineno)
+        print(
+            f"Matmul: dimensions mismatch, dimension along last and second to last axis of tensors should be the same, found {lsize} and {rsize} on line",
+            lineno,
+        )
         return
     res_dims = [size1[-2], size2[-1]]
     size1 = size1[:-2]
@@ -76,14 +93,16 @@ def check_size_matmul(size1: size, size2: size, lineno) -> bool:
         batch_dims = size1[: len(size1) - len(size2)]
         size1 = size2[len(size1) - len(size2) :]
 
-    for (n1, n2) in zip(size1, size2):
+    for i, (n1, n2) in enumerate(zip(size1, size2)):
         if n1 == 1:
             batch_dims.append(n2)
         elif n2 == 1:
             batch_dims.append(n1)
         else:
-            # TODO make this message better by getting index of dims that are mismatching
-            print("Matmul: cannot broadcast nonsingleton dimension", lineno)
+            print(
+                f"Matmul: Cannot broadcast nonsingleton dimension {i}, found sizes {lsize}, {rsize}",
+                lineno,
+            )
             return
     res_dims = batch_dims + res_dims
     return res_dims
@@ -116,8 +135,16 @@ def typecheck_add_sub(left: Type, right: Type, lineno) -> Type:
         return right
 
     # ADD OTHER CASES
+    elif isinstance(left, Tensor) and isinstance(right, Tensor):
+        print(
+            f"Addition/Subtraction: Sizes of tensors do not match found sizes {left.size} and {right.size} on line",
+            lineno,
+        )
     else:
-        print("Mismatch in subtraction dimensions!", lineno)
+        print(
+            f"Addition/Subtraction: Type mismatch expected tensors found types {type(left)} and {type(right)} on line",
+            lineno,
+        )
         return
 
 
@@ -143,9 +170,15 @@ def typecheck_mult(left: Type, right: Type, lineno: int) -> Type:
 
     # ADD OTHER CASES
     elif isinstance(left, Tensor) and isinstance(right, Tensor):
-        pass
+        print(
+            f"Multiply: Sizes of tensors do not match found sizes {left.size} and {right.size} on line",
+            lineno,
+        )
     else:
-        print("Type mismatch in multiply expected tensor!", lineno)
+        print(
+            f"Multiply: Type mismatch in multiply expected tensors found types {type(left)} and {type(right)} on line",
+            lineno,
+        )
         return
 
 
@@ -182,7 +215,7 @@ def typecheck_matmul(left: Type, right: Type, lineno: int) -> Type:
         return t_type
     else:
         print(
-            f"both left and right side of matrix mul have to be tensor types... found types {type(left)} and {type(right)} on line number",
+            f"Matmul: Both left and right side of matrix mul have to be tensor types... found types {type(left)} and {type(right)} on line",
             lineno,
         )
         return

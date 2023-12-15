@@ -125,7 +125,7 @@ def typecheck_expr(expr, context):
 
         # Dealing with at least one tensor, same type and device
         if isinstance(left, Tensor) or isinstance(right, Tensor):
-            if not tensors_compatable(left, right):
+            if not tensors_compatable(left, right, expr.lineno):
                 return
 
             # Add/Subtract tensors
@@ -208,7 +208,7 @@ def typecheck_function_call(expr, context):
             # add arguments to context
             defn = context[func.id]
             if not isinstance(defn, Function):
-                print("call id not a function on line", expr.lineno)
+                print("Expr: call id not a function on line", expr.lineno)
                 return
 
             func_context = copy.deepcopy(context)
@@ -234,7 +234,8 @@ def typecheck_function_call(expr, context):
             for r_type in return_types:
                 if r_type != return_types[0]:
                     print(
-                        "warning, function returns different types on line", expr.lineno
+                        "Function Call: Warning, function returns different types on line",
+                        expr.lineno,
                     )
 
             return return_types[0]
@@ -287,7 +288,7 @@ def typecheck_function_call(expr, context):
                                 size = t.size
                             elif t.size != size:
                                 print(
-                                    f"cannot stack tensors of differing sizes! Sizes {size} and {t.size} on line",
+                                    f"Stack: cannot stack tensors of differing sizes! Sizes {size} and {t.size} on line",
                                     expr.lineno,
                                 )
                                 return
@@ -306,7 +307,7 @@ def typecheck_function_call(expr, context):
                                     size[axis] += tsize[axis]
             if func.attr == "stack":
                 if axis != None and (axis >= len(size) or axis < 0):
-                    print("Axis out of bounds", axis, "on line", expr.lineno)
+                    print("Stack: Axis out of bounds", axis, "on line", expr.lineno)
                     return
                 new_size = size[0:axis] + [1] + size[axis:]
             else:
@@ -337,7 +338,7 @@ def typecheck_function_call(expr, context):
                 elts2 = reduce((lambda x, y: x * y), new_size)
                 if elts1 != elts2:
                     print(
-                        f"Invalid reshape! Cannot reshape tensor of size {body.size} to tensor of size {new_size}",
+                        f"Reshape: Invalid reshape! Cannot reshape tensor of size {body.size} to tensor of size {new_size}",
                         expr.lineno,
                     )
                     return
@@ -349,7 +350,7 @@ def typecheck_function_call(expr, context):
                 )
                 return t
             else:
-                print("Cannot call reshape on non-tensor", expr.lineno)
+                print("Reshape: Cannot call reshape on non-tensor line", expr.lineno)
                 return
 
         # Handles torch.tensor calls
@@ -398,7 +399,9 @@ def typecheck_function_call(expr, context):
                     )
                     return t
             else:
-                print("argument for tile must be a tensor type", expr.lineno)
+                print(
+                    "Tile: Argument for tile must be a tensor type on line", expr.lineno
+                )
                 return
 
 

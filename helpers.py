@@ -197,10 +197,9 @@ def typecheck_matmul(left: Type, right: Type, lineno: int) -> Type:
         if len(dims_left) == 1:
             dims_left = [1] + left.size
             remove_left = True
-        elif len(dims_right) == 1:
+        if len(dims_right) == 1:
             dims_right = right.size + [1]
             remove_right = True
-            print(dims_right)
         res_dim = check_size_matmul(dims_left, dims_right, lineno)
 
         if res_dim is None:

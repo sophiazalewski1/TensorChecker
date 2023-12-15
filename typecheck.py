@@ -413,7 +413,7 @@ ast_ = ast.parse(file_content)
 
 # Parse!
 contexts = parse_stmt_list(ast_.body, [Context()])
-# for context in contexts:
-#     print("the context is ")
-#     print(context)
+for context in contexts:
+    print("the context is ")
+    print(context)
 

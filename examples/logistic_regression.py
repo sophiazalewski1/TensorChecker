@@ -26,14 +26,16 @@ eta = 0.1
 y = 1
 
 
-for iteration in range(2, 30):
-    print(f"\nITERATION {iteration}")
-    gradient = np.array(
-        (grad(y, sigmoid(theta @ x), x[0])),
-        (grad(y, sigmoid(theta @ x), x[1])),
-        (grad(y, sigmoid(theta @ x), x[2])),
-    )
-    print(f"gradient = {gradient}")
-    theta = np.subtract(eta * gradient, theta)
-    print(f"theta = {theta}")
+theta @ x
+
+# for iteration in range(2, 30):
+#     print(f"\nITERATION {iteration}")
+#     gradient = np.array(
+#         (grad(y, sigmoid(theta @ x), x[0])),
+#         (grad(y, sigmoid(theta @ x), x[1])),
+#         (grad(y, sigmoid(theta @ x), x[2])),
+#     )
+#     print(f"gradient = {gradient}")
+#     theta = np.subtract(eta * gradient, theta)
+#     print(f"theta = {theta}")
 
